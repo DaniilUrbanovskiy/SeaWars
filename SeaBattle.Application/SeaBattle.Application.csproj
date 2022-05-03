@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Domain\" />
-    <Folder Include="DataAccess\" />
+    <ProjectReference Include="..\SeaBattle.Infrastructure\SeaBattle.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

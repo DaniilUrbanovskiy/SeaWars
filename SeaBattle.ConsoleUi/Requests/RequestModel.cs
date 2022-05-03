@@ -12,8 +12,19 @@ namespace SeaBattle.ConsoleUi.Requests
         static HttpClient client = new HttpClient();
         public static async Task<string[,]> GetField()
         {
-            var response = await client.GetAsync("https://localhost:44362/field");
+            var response = await client.GetAsync("https://localhost:44373/field");
             return response.Content.ReadAsStringAsync().Result.ToDoubleArray();
         }
+        public static async Task<string[,]> GetInitField(int whooseField)
+        {
+            var response = await client.GetAsync("https://localhost:44373/field/randinit/"+whooseField);
+            return response.Content.ReadAsStringAsync().Result.ToDoubleArray();
+        }
+        public static async Task<string[,]> PutShip()
+        {
+            var response = await client.PostAsync("https://localhost:44373/field/owninit");
+            return response.Content.ReadAsStringAsync().Result.ToDoubleArray();
+        }
+
     }
 }
