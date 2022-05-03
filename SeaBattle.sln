@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeaBattle.API", "SeaBattle.API\SeaBattle.API.csproj", "{275B17B8-4D02-4C9D-8188-56C03E3C565E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C972F83E-F887-4337-81AA-A984F0FD88C3} = {C972F83E-F887-4337-81AA-A984F0FD88C3}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeaBattle.Application", "SeaBattle.Application\SeaBattle.Application.csproj", "{C972F83E-F887-4337-81AA-A984F0FD88C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeaBattle.ConsoleUi", "SeaBattle.ConsoleUi\SeaBattle.ConsoleUi.csproj", "{692805C7-87FF-42E0-9FCA-D0C1FFA28FD2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{275B17B8-4D02-4C9D-8188-56C03E3C565E} = {275B17B8-4D02-4C9D-8188-56C03E3C565E}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeaBattle.Infrastructure", "SeaBattle.Infrastructure\SeaBattle.Infrastructure.csproj", "{8C7CB0F3-156C-497B-B716-A38B0ABBCE17}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{275B17B8-4D02-4C9D-8188-56C03E3C565E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{275B17B8-4D02-4C9D-8188-56C03E3C565E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{275B17B8-4D02-4C9D-8188-56C03E3C565E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{275B17B8-4D02-4C9D-8188-56C03E3C565E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C972F83E-F887-4337-81AA-A984F0FD88C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C972F83E-F887-4337-81AA-A984F0FD88C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C972F83E-F887-4337-81AA-A984F0FD88C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C972F83E-F887-4337-81AA-A984F0FD88C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{692805C7-87FF-42E0-9FCA-D0C1FFA28FD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{692805C7-87FF-42E0-9FCA-D0C1FFA28FD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{692805C7-87FF-42E0-9FCA-D0C1FFA28FD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{692805C7-87FF-42E0-9FCA-D0C1FFA28FD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C7CB0F3-156C-497B-B716-A38B0ABBCE17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C7CB0F3-156C-497B-B716-A38B0ABBCE17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C7CB0F3-156C-497B-B716-A38B0ABBCE17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C7CB0F3-156C-497B-B716-A38B0ABBCE17}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C95FABFD-8921-4003-907C-264B067E17CC}
+	EndGlobalSection
+EndGlobal
