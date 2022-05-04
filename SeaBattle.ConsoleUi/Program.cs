@@ -8,20 +8,20 @@ namespace SeaBattle.ConsoleUi
 {
     class Program
     {       
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Console.WriteLine("Press (Enter) to start game:");
             Console.ReadLine();
             Console.Clear();
 
-            var field = RequestModel.GetField(1);
-            ShowField(field.Result);
+            var field = await RequestModel.GetField(1);
+            ShowField(field);
 
             Console.WriteLine("Choose option:\n1. Generate by yourself\n2. Generate by random");
             byte userChoice = byte.Parse(Console.ReadLine());
             if (userChoice == 1)
             {
-                string[,] lastAttempt = field.Result;
+                string[,] lastAttempt = field;
                 int c = 1;
                 for (int i = 4; i > 0; i--)
                 {
@@ -37,8 +37,8 @@ namespace SeaBattle.ConsoleUi
                                 Console.WriteLine("Enter (true), if you want locate your ship horizontal, and (false), if vertical:");
                                 position = bool.Parse(Console.ReadLine());
                             }
-                            field = RequestModel.PutShip(i, startPoint, position);                            
-                            if (field.Result != null)
+                            field = await RequestModel.PutShip(i, startPoint, position);                            
+                            if (field != null)
                             {
                                 break;
                             }
@@ -46,28 +46,28 @@ namespace SeaBattle.ConsoleUi
                             ShowField(lastAttempt);
                         }
                         Console.Clear();
-                        ShowField(field.Result);
-                        lastAttempt = field.Result;
+                        ShowField(field);
+                        lastAttempt = field;
                     }
                     c++;
                 }
             }
             else
             {
-                field = RequestModel.GetInitField(1);
+                field = await RequestModel.GetInitField(1);
             }
             Console.Clear();
-            ShowField(field.Result);
+            ShowField(field);
 
             Console.WriteLine("Press (Enter) to show enemy's field:");
             Console.ReadLine();
             Console.Clear();
 
-            var enemyFieldHiden = RequestModel.GetField(2);
-            var enemyField = RequestModel.GetField(2);
-            enemyField = RequestModel.GetInitField(2);
+            var enemyFieldHiden = await RequestModel.GetField(2);
+            var enemyField = await RequestModel.GetField(2);
+            enemyField = await RequestModel.GetInitField(2);
             
-            ShowField(enemyFieldHiden.Result);
+            ShowField(enemyFieldHiden);
 
             //Random random = new Random();
             //int movesCounter = 0;
