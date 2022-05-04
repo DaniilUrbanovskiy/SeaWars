@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SeaBattle.Application.Domain
+namespace SeaBattle.Infrastructure.Domain
 {
     public enum Direction
     {

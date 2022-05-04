@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SeaBattle.Application.Core;
 using SeaBattle.Application.DataAccess;
-using SeaBattle.Application.Domain;
+using SeaBattle.Infrastructure.Domain;
 
 namespace SeaBattle.API.Controllers
 {
@@ -48,7 +48,7 @@ namespace SeaBattle.API.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest(serialized);
             }
         }
     }

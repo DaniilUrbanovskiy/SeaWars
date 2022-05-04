@@ -1,4 +1,4 @@
-﻿using SeaBattle.Application.Domain;
+﻿using SeaBattle.Infrastructure.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -21,7 +21,36 @@ namespace SeaBattle.ConsoleUi
             byte userChoice = byte.Parse(Console.ReadLine());
             if (userChoice == 1)
             {
-                field = 
+                string[,] lastAttempt = field.Result;
+                int c = 1;
+                for (int i = 4; i > 0; i--)
+                {
+                    for (int j = 0; j < c; j++)
+                    {                        
+                        while (true)
+                        {
+                            Console.WriteLine($"Enter start point for {i}-deck ship(example: 1a)");
+                            string startPoint = Console.ReadLine();
+                            bool position = false;
+                            if (i != 1)
+                            {
+                                Console.WriteLine("Enter (true), if you want locate your ship horizontal, and (false), if vertical:");
+                                position = bool.Parse(Console.ReadLine());
+                            }
+                            field = RequestModel.PutShip(i, startPoint, position);                            
+                            if (field.Result != null)
+                            {
+                                break;
+                            }
+                            Console.Clear();
+                            ShowField(lastAttempt);
+                        }
+                        Console.Clear();
+                        ShowField(field.Result);
+                        lastAttempt = field.Result;
+                    }
+                    c++;
+                }
             }
             else
             {
@@ -33,9 +62,6 @@ namespace SeaBattle.ConsoleUi
             Console.WriteLine("Press (Enter) to show enemy's field:");
             Console.ReadLine();
             Console.Clear();
-
-
-
         }           
         public static void ShowField(string [,] field)
         {
@@ -84,7 +110,7 @@ namespace SeaBattle.ConsoleUi
 
 
 //public static string[,] InicializeFieldByYourself(string[,] field, string startPoint, bool isHorizontal)
-//{
+
 //    int c = 1;
 //    for (int i = 4; i > 0; i--)
 //    {
