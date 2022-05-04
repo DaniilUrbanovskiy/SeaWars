@@ -14,7 +14,7 @@ namespace SeaBattle.ConsoleUi
             Console.ReadLine();
             Console.Clear();
 
-            var field = RequestModel.GetField();
+            var field = RequestModel.GetField(1);
             ShowField(field.Result);
 
             Console.WriteLine("Choose option:\n1. Generate by yourself\n2. Generate by random");
@@ -62,14 +62,125 @@ namespace SeaBattle.ConsoleUi
             Console.WriteLine("Press (Enter) to show enemy's field:");
             Console.ReadLine();
             Console.Clear();
-        }           
+
+            var enemyFieldHiden = RequestModel.GetField(2);
+            var enemyField = RequestModel.GetField(2);
+            enemyField = RequestModel.GetInitField(2);
+            
+            ShowField(enemyFieldHiden.Result);
+
+            //Random random = new Random();
+            //int movesCounter = 0;
+            //bool conditionForEndTheGame = false;
+            //while (conditionForEndTheGame == false)
+            //{
+            //    movesCounter++;
+            //    AttackStatus attackStatus = 0;
+            //    if (movesCounter % 2 != 0)
+            //    {
+            //        string startPoint = string.Empty;
+            //        while (attackStatus != AttackStatus.Missed)
+            //        {
+            //            Console.Clear();
+            //            ShowField(enemysFieldHiden);
+            //            Console.WriteLine("Enter point to attack enemy's ship:");
+            //            startPoint = Console.ReadLine();
+            //            attackStatus = attackMove.AttackTheShip(ship, enemysField, enemysFieldHiden, startPoint, movesCounter);
+            //            conditionForEndTheGame = IsGameEnded(enemysField);
+            //            Console.Clear();
+            //            if (conditionForEndTheGame == true)
+            //            {
+            //                break;
+            //            }
+            //        }
+            //        if (conditionForEndTheGame == true)
+
+            //        {
+            //            break;
+            //        }
+            //        ShowField(enemysFieldHiden);
+            //        Console.WriteLine($"You attacked ({startPoint})\n");
+            //        Console.WriteLine("Press (Enter) to give enemy his move:");
+            //        Console.ReadLine();
+            //    }
+            //    else
+            //    {
+            //        string startPoint = string.Empty;
+            //        string nextPointToAttack = string.Empty;
+            //        while (attackStatus != AttackStatus.Missed)
+            //        {
+            //            if (attackStatus != AttackStatus.Failed)
+            //            {
+            //                Console.Clear();
+            //                ShowField(field);
+            //            }
+            //            if (attackStatus != AttackStatus.Failed)
+            //            {
+            //                Thread.Sleep(1000);
+            //            }
+            //            if (attackStatus != AttackStatus.Hitted)
+            //            {
+            //                string hittedShip = IsHittedShip(field, ship, attackMove);
+            //                if (hittedShip != null)
+            //                {
+            //                    startPoint = attackMove.SmartAttack(ship, field, hittedShip);
+            //                }
+            //                if (hittedShip == null)
+            //                {
+            //                    int num = random.Next(1, 11);
+            //                    char let = new char().GetRandomLetter();
+            //                    startPoint = $"{Convert.ToString(num) + let}";
+            //                }
+            //            }
+            //            if (attackStatus == AttackStatus.Hitted)
+            //            {
+            //                startPoint = attackMove.SmartAttack(ship, field, nextPointToAttack);
+            //            }
+            //            attackStatus = attackMove.AttackTheShip(ship, field, enemysFieldHiden, startPoint, movesCounter);
+            //            if (attackStatus == AttackStatus.Hitted)
+            //            {
+            //                nextPointToAttack = startPoint;
+            //            }
+            //            conditionForEndTheGame = IsGameEnded(field);
+            //            Console.Clear();
+            //            if (conditionForEndTheGame == true)
+            //            {
+            //                break;
+            //            }
+            //        }
+            //        if (conditionForEndTheGame == true)
+            //        {
+            //            break;
+            //        }
+            //        ShowField(field);
+            //        Console.WriteLine($"Enemy attacked ({startPoint})\n");
+            //        Console.WriteLine("Press (Enter) to attack the enemy:");
+            //        Console.ReadLine();
+            //    }
+            //}
+            //if (movesCounter % 2 != 0)
+            //{
+            //    Console.Clear();
+            //    ShowField(enemysFieldHiden);
+            //    Console.WriteLine("You win!");
+            //    Console.ReadLine();
+            //}
+            //else
+            //{
+            //    Console.Clear();
+            //    ShowField(field);
+            //    Console.WriteLine("You lose!");
+            //    Console.ReadLine();
+            //}
+
+        }               
         public static void ShowField(string [,] field)
         {
             for (int i = 0; i < 14; i++)
             {
                 for (int j = 0; j < 14; j++)
                 {
-                    if (field[i, j] == "0")
+                        if (field[i, j] == "0")
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.Write(field[i, j] + " ");
@@ -108,30 +219,3 @@ namespace SeaBattle.ConsoleUi
 
 
 
-
-//public static string[,] InicializeFieldByYourself(string[,] field, string startPoint, bool isHorizontal)
-
-//    int c = 1;
-//    for (int i = 4; i > 0; i--)
-//    {
-//        for (int j = 0; j < c; j++)
-//        {
-//            bool conditionForRestart = false;
-//            while (conditionForRestart == false)
-//            {
-//                Console.WriteLine($"Enter start point for {i}-deck ship(example: 1a)");
-//                string startPoint = Console.ReadLine();
-//                bool position = default;
-//                if (i != 1)
-//                {
-//                    Console.WriteLine("Enter (true), if you want locate your ship horizontal, and (false), if vertical:");
-//                    position = bool.Parse(Console.ReadLine());
-//                }
-//                conditionForRestart = Ships.CreateShip(startPoint, field, i, position);
-//                Console.Clear();
-//            }
-//        }
-//        c++;
-//    }
-//    return field;
-//}

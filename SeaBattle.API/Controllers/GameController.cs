@@ -15,12 +15,19 @@ namespace SeaBattle.API.Controllers
     [Route("[controller]")]
     public class FieldController : ControllerBase
     {
-       [HttpGet]
-        public IActionResult CreateField()
+        [HttpGet("{whoseField}")]
+        public IActionResult CreateField([FromRoute]WhoseField whoseField)
         {
             Field field = new Field();
             field.MainField = FieldHandler.CreateField();
-            DataStorage.Field = field;
+            if (whoseField == WhoseField.Field)
+            {
+                DataStorage.Field = field;
+            }
+            else
+            {
+                DataStorage.EnemyField = field;
+            }
             var serialized = JsonConvert.SerializeObject(field.MainField);
             return Ok(serialized);
         }

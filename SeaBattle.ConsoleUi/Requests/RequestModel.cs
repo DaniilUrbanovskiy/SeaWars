@@ -12,14 +12,14 @@ namespace SeaBattle.ConsoleUi.Requests
     public static class RequestModel
     {
         static HttpClient client = new HttpClient();
-        public static async Task<string[,]> GetField()
+        public static async Task<string[,]> GetField(int whoseField)
         {
-            var response = await client.GetAsync("https://localhost:44373/field");
+            var response = await client.GetAsync("https://localhost:44373/field/"+whoseField);
             return response.Content.ReadAsStringAsync().Result.ToDoubleArray();
         }
-        public static async Task<string[,]> GetInitField(int whooseField)
+        public static async Task<string[,]> GetInitField(int whoseField)
         {
-            var response = await client.GetAsync("https://localhost:44373/field/randinit/"+whooseField);
+            var response = await client.GetAsync("https://localhost:44373/field/randinit/"+whoseField);
             return response.Content.ReadAsStringAsync().Result.ToDoubleArray();
         }
         public static async Task<string[,]> PutShip(int deckCount, string point, bool position)

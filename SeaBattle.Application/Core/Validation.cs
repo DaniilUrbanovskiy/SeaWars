@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SeaBattle.Infrastructure.Domain;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -90,6 +91,41 @@ namespace SeaBattle.Application.Core
                 }
             }
             return true;
+        }
+        public static bool IsGameEnded(Field field)
+        {
+            for (int i = 0; i < 14; i++)
+            {
+                for (int j = 0; j < 14; j++)
+                {
+                    if (field.MainField[i, j] == "0")
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        public static string IsHittedShip(Field field, Attack attackMove)
+        {
+            string isHttedShip = string.Empty;
+            bool isHittedOnField = false;
+            for (int i = 0; i < 14; i++)
+            {
+                for (int j = 0; j < 14; j++)
+                {
+                    if (field.MainField[i, j] == "O")
+                    {
+                        //isHittedOnField = attackMove.KilledOrNotSimplified(field, j, i);
+                        if (isHittedOnField == false)
+                        {
+                            isHttedShip = Ships.ConvertPointToString(j, i);
+                            return isHttedShip;
+                        }
+                    }
+                }
+            }
+            return null;
         }
     }
 }
