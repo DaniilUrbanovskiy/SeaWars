@@ -22,11 +22,11 @@ namespace SeaBattle.API.Controllers
             field.MainField = FieldHandler.CreateField();
             if (whoseField == WhoseField.Field)
             {
-                DataStorage.Field = field;
+                DataStorage.Field.MainField = field.MainField;
             }
             else
             {
-                DataStorage.EnemyField = field;
+                DataStorage.EnemyField.MainField = field.MainField;
             }
             var serialized = JsonConvert.SerializeObject(field.MainField);
             return Ok(serialized);
@@ -36,7 +36,16 @@ namespace SeaBattle.API.Controllers
         public IActionResult RandInit([FromRoute]WhoseField whoseField)
         {
             Field field = whoseField == WhoseField.Field ? DataStorage.Field : DataStorage.EnemyField;
+
             field.MainField = FieldHandler.InicializeFieldByRandom(field.MainField);
+            if (whoseField == WhoseField.Field)
+            {
+                DataStorage.Field.MainField = field.MainField;
+            }
+            if (whoseField == WhoseField.EnemysField)
+            {
+                DataStorage.EnemyField.MainField = field.MainField;
+            }
 
             var serialized = JsonConvert.SerializeObject(field.MainField);
             return Ok(serialized);

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using SeaBattle.ConsoleUi.Requests;
+using SeaBattle.Infrastructure.Common;
 using SeaBattle.Infrastructure.Extentions;
 
 namespace SeaBattle.ConsoleUi
@@ -63,16 +65,26 @@ namespace SeaBattle.ConsoleUi
             Console.ReadLine();
             Console.Clear();
 
+
             var enemyFieldHiden = await RequestModel.GetField(2);
-            var enemyField = await RequestModel.GetField(2);
-            enemyField = await RequestModel.GetInitField(2);
-            
+            var enemyField = await RequestModel.GetInitField(2);
             ShowField(enemyFieldHiden);
+
+            Console.Clear();
+            ShowField(enemyFieldHiden);
+            Console.WriteLine("Enter point to attack enemy's ship:");
+            var startPointForAttck = Console.ReadLine();
+            AttackResponse attackResponse = RequestModel.SetPoint(enemyFieldHiden, startPointForAttck, 1).Result;
+            AttackStatus attackStatus = attackResponse.AttackStatus;
+            enemyFieldHiden = attackResponse.EnemyFieldHiden.ToDoubleDimension();
+            ShowField(enemyFieldHiden);
+
+
 
             //Random random = new Random();
             //int movesCounter = 0;
-            //bool conditionForEndTheGame = false;
-            //while (conditionForEndTheGame == false)
+            //bool isGameEnded = false;
+            //while (isGameEnded == false)
             //{
             //    movesCounter++;
             //    AttackStatus attackStatus = 0;
@@ -82,23 +94,23 @@ namespace SeaBattle.ConsoleUi
             //        while (attackStatus != AttackStatus.Missed)
             //        {
             //            Console.Clear();
-            //            ShowField(enemysFieldHiden);
+            //            ShowField(enemyFieldHiden);
             //            Console.WriteLine("Enter point to attack enemy's ship:");
             //            startPoint = Console.ReadLine();
-            //            attackStatus = attackMove.AttackTheShip(ship, enemysField, enemysFieldHiden, startPoint, movesCounter);
-            //            conditionForEndTheGame = IsGameEnded(enemysField);
+            //            attackStatus = AttackTheShip(enemyFieldHiden, startPoint, movesCounter);
+            //            isGameEnded = bool.Parse(await RequestModel.GetGameStatus(2));
             //            Console.Clear();
-            //            if (conditionForEndTheGame == true)
+            //            if (isGameEnded == true)
             //            {
             //                break;
             //            }
             //        }
-            //        if (conditionForEndTheGame == true)
+            //        if (isGameEnded == true)
 
             //        {
             //            break;
             //        }
-            //        ShowField(enemysFieldHiden);
+            //        ShowField(enemyFieldHiden);
             //        Console.WriteLine($"You attacked ({startPoint})\n");
             //        Console.WriteLine("Press (Enter) to give enemy his move:");
             //        Console.ReadLine();
@@ -141,14 +153,14 @@ namespace SeaBattle.ConsoleUi
             //            {
             //                nextPointToAttack = startPoint;
             //            }
-            //            conditionForEndTheGame = IsGameEnded(field);
+            //            isGameEnded = isGameEnded = bool.Parse(await RequestModel.GetGameStatus(1)); ;
             //            Console.Clear();
-            //            if (conditionForEndTheGame == true)
+            //            if (isGameEnded == true)
             //            {
             //                break;
             //            }
             //        }
-            //        if (conditionForEndTheGame == true)
+            //        if (isGameEnded == true)
             //        {
             //            break;
             //        }
@@ -161,7 +173,7 @@ namespace SeaBattle.ConsoleUi
             //if (movesCounter % 2 != 0)
             //{
             //    Console.Clear();
-            //    ShowField(enemysFieldHiden);
+            //    ShowField(enemyFieldHiden);
             //    Console.WriteLine("You win!");
             //    Console.ReadLine();
             //}
@@ -173,7 +185,7 @@ namespace SeaBattle.ConsoleUi
             //    Console.ReadLine();
             //}
 
-        }               
+        }
         public static void ShowField(string [,] field)
         {
             for (int i = 0; i < 14; i++)

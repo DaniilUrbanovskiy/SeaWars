@@ -9,5 +9,6 @@ namespace SeaBattle.Application.DataAccess
     {
         public static Field Field { get; set; } = new Field();
         public static Field EnemyField { get; set; } = new Field();
+       
     }
 }

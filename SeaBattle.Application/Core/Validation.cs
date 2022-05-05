@@ -116,7 +116,7 @@ namespace SeaBattle.Application.Core
                 {
                     if (field.MainField[i, j] == "O")
                     {
-                        //isHittedOnField = attackMove.KilledOrNotSimplified(field, j, i);
+                        isHittedOnField = Attack.KilledOrNotSimplified(field, j, i);
                         if (isHittedOnField == false)
                         {
                             isHttedShip = Ships.ConvertPointToString(j, i);
