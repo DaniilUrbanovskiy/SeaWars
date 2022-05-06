@@ -31,6 +31,7 @@ namespace SeaBattle.API.Controllers
             var serialized = JsonConvert.SerializeObject(isGameEnded);
             return Ok(serialized);
         }
+
         [HttpPost("GetShipStatus")]
         public IActionResult GetShipStatus([FromBody] string[][] field)
         {
@@ -38,6 +39,6 @@ namespace SeaBattle.API.Controllers
             var serialized = JsonConvert.SerializeObject(hittedShip);
             return Ok(serialized);
         }
- 
+
     }
 }

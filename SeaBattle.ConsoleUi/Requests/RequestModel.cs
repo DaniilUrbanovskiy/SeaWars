@@ -104,8 +104,17 @@ namespace SeaBattle.ConsoleUi.Requests
             return responseBody;
         }
 
-        
+        public static async Task<string> GetRandomPoint()
+        {
+            var response = await client.GetAsync($"{basePath}common/getrandompoint").Result.Content.ReadAsStringAsync();
+            var responseBody = JsonConvert.DeserializeObject<string>(response);
+            return responseBody;
+        }
 
-
+        public static async Task<int> GetGameId()
+        {
+            var response = await client.GetAsync($"{basePath}common/getgameid").Result.Content.ReadAsStringAsync();
+            return int.Parse(response);
+        }
     }
 }
