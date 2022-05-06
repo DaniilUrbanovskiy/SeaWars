@@ -68,9 +68,9 @@ namespace SeaBattle.ConsoleUi.Requests
 
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync($"{basePath}condition/getshipstatus", httpContent);
-
-            return response.Content.ReadAsStringAsync().Result;
+            var response = await client.PostAsync($"{basePath}condition/getshipstatus", httpContent).Result.Content.ReadAsStringAsync();
+            var responseBody = JsonConvert.DeserializeObject<string>(response);
+            return responseBody;
         }
 
         public static async Task<AttackResponse> SetPoint(string[,] enemyFieldHiden, string startPoint, int movesCounter)
@@ -100,7 +100,8 @@ namespace SeaBattle.ConsoleUi.Requests
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
             var response = await client.PostAsync($"{basePath}attack/SmartAttack", httpContent).Result.Content.ReadAsStringAsync();
-            return response;
+            var responseBody = JsonConvert.DeserializeObject<string>(response);
+            return responseBody;
         }
 
         

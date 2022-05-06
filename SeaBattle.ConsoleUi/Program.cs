@@ -125,11 +125,11 @@ namespace SeaBattle.ConsoleUi
                         if (attackStatus != AttackStatus.Hitted)
                         {
                             string hittedShip = await RequestModel.GetShipStatus(field);
-                            if (hittedShip != "null")
+                            if (hittedShip != null)
                             {
-                                startPoint = await RequestModel.SmartAttack(field, startPoint);
+                                startPoint = await RequestModel.SmartAttack(field, hittedShip);
                             }
-                            if (hittedShip == "null")
+                            if (hittedShip == null)
                             {
                                 int num = random.Next(1, 11);
                                 char let = new char().GetRandomLetter();
@@ -147,7 +147,7 @@ namespace SeaBattle.ConsoleUi
                         {
                             nextPointToAttack = startPoint;
                         }
-                        isGameEnded = isGameEnded = bool.Parse(await RequestModel.GetGameStatus(1)); ;
+                        isGameEnded = isGameEnded = bool.Parse(await RequestModel.GetGameStatus(1));
                         Console.Clear();
                         if (isGameEnded == true)
                         {
