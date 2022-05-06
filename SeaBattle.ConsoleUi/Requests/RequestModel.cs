@@ -76,7 +76,7 @@ namespace SeaBattle.ConsoleUi.Requests
         public static async Task<AttackResponse> SetPoint(string[,] enemyFieldHiden, string startPoint, int movesCounter)
         {
             AttackOptions attackOptions = new AttackOptions();
-            attackOptions.EnemyFieldHiden = enemyFieldHiden.ToJaggedArray();
+            attackOptions.Field = enemyFieldHiden.ToJaggedArray();
             attackOptions.StartPoint = startPoint;
             attackOptions.MovesCounter = movesCounter;
 
@@ -92,7 +92,7 @@ namespace SeaBattle.ConsoleUi.Requests
         public static async Task<string> SmartAttack(string[,] field, string startPoint)
         {
             AttackOptions attackOptions = new AttackOptions();
-            attackOptions.EnemyFieldHiden = field.ToJaggedArray();
+            attackOptions.Field = field.ToJaggedArray();
             attackOptions.StartPoint = startPoint;
 
             string json = JsonConvert.SerializeObject(attackOptions);

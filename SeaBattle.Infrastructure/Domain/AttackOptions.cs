@@ -6,7 +6,7 @@ namespace SeaBattle.Infrastructure.Domain
 {
     public class AttackOptions
     {
-        public string[][] EnemyFieldHiden { get; set; }
+        public string[][] Field { get; set; }
         public string StartPoint { get; set; }
         public int MovesCounter { get; set; }
     }

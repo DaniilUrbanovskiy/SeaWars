@@ -20,7 +20,7 @@ namespace SeaBattle.API.Controllers
         Random random = new Random();
 
         [HttpGet("GetRandomPoint")]
-        public IActionResult GetGameStatus([FromRoute] WhoseField whoseField)
+        public IActionResult GetRandomPoint()
         {            
             int num = random.Next(1, 11);
             char let = new char().GetRandomLetter();

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SeaBattle.Application.Core;
 using SeaBattle.Application.DataAccess;
@@ -22,7 +17,7 @@ namespace SeaBattle.API.Controllers
         {
             AttackResponse attackResponse = new AttackResponse();
 
-            var field = options.EnemyFieldHiden.ToDoubleDimension();           
+            var field = options.Field.ToDoubleDimension();           
 
             AttackStatus attackStatus = default;
 
@@ -48,7 +43,7 @@ namespace SeaBattle.API.Controllers
         [HttpPost("SmartAttack")]
         public IActionResult SmartAttack([FromBody]AttackOptions options)
         {
-            string startPoint = Attack.SmartAttack(options.EnemyFieldHiden.ToDoubleDimension(), options.StartPoint);
+            string startPoint = Attack.SmartAttack(options.Field.ToDoubleDimension(), options.StartPoint);
 
             var serialized = JsonConvert.SerializeObject(startPoint);
             return Ok(serialized);
