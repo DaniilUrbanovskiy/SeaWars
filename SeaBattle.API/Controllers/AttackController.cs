@@ -18,19 +18,39 @@ namespace SeaBattle.API.Controllers
     public class AttackController : ControllerBase
     {
         [HttpPost("SetPoint")]
-        public IActionResult OwnInit([FromBody]AttackOptions options)
+        public IActionResult SetPoint([FromBody]AttackOptions options)
         {
             AttackResponse attackResponse = new AttackResponse();
 
-            var field = options.EnemyFieldHiden.ToDoubleDimension();
+            var field = options.EnemyFieldHiden.ToDoubleDimension();           
 
-            AttackStatus attackStatus = Attack.AttackTheShip(DataStorage.EnemyField, ref field, options.StartPoint, options.MovesCounter);
+            AttackStatus attackStatus = default;
+
+            if (options.MovesCounter == 1)
+            {
+                attackStatus = Attack.AttackTheShip(DataStorage.EnemyField, ref field, options.StartPoint, options.MovesCounter);
+            }
+            else
+            {
+                DataStorage.Field.MainField = field;
+                attackStatus = Attack.AttackTheShip(DataStorage.Field, ref field, options.StartPoint, options.MovesCounter);
+                field = DataStorage.Field.MainField;
+            }
 
             attackResponse.AttackStatus = attackStatus;
             attackResponse.EnemyFieldHiden = field.ToJaggedArray();
 
             var serialized = JsonConvert.SerializeObject(attackResponse);
 
+            return Ok(serialized);
+        }
+
+        [HttpPost("SmartAttack")]
+        public IActionResult SmartAttack([FromBody]AttackOptions options)
+        {
+            string startPoint = Attack.SmartAttack(options.EnemyFieldHiden.ToDoubleDimension(), options.StartPoint);
+
+            var serialized = JsonConvert.SerializeObject(startPoint);
             return Ok(serialized);
         }
     }

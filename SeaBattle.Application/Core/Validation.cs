@@ -106,7 +106,7 @@ namespace SeaBattle.Application.Core
             }
             return true;
         }
-        public static string IsHittedShip(Field field, Attack attackMove)
+        public static string IsHittedShip(string[,] field)
         {
             string isHttedShip = string.Empty;
             bool isHittedOnField = false;
@@ -114,7 +114,7 @@ namespace SeaBattle.Application.Core
             {
                 for (int j = 0; j < 14; j++)
                 {
-                    if (field.MainField[i, j] == "O")
+                    if (field[i, j] == "O")
                     {
                         isHittedOnField = Attack.KilledOrNotSimplified(field, j, i);
                         if (isHittedOnField == false)

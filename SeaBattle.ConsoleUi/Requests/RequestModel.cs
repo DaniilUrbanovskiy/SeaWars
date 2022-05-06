@@ -14,16 +14,25 @@ namespace SeaBattle.ConsoleUi.Requests
     {
         private static readonly string basePath = "https://localhost:44373/";
         static HttpClient client = new HttpClient();
+
         public static async Task<string[,]> GetField(int whoseField)
         {
             var response = await client.GetAsync($"{basePath}field/"+whoseField);
             return response.Content.ReadAsStringAsync().Result.ToDoubleArray();
         }
+
         public static async Task<string[,]> GetInitField(int whoseField)
         {
             var response = await client.GetAsync($"{basePath}field/randinit/"+whoseField);
             return response.Content.ReadAsStringAsync().Result.ToDoubleArray();
         }
+
+        public static async Task<string> GetGameStatus(int whoseField)
+        {
+            var response = await client.GetAsync($"{basePath}condition/getgamestatus/" + whoseField);
+            return response.Content.ReadAsStringAsync().Result;
+        }
+
         public static async Task<string[,]> PutShip(int deckCount, string point, bool position)
         {
             ShipOtions ship = new ShipOtions();
@@ -52,11 +61,18 @@ namespace SeaBattle.ConsoleUi.Requests
             }
             
         }
-        public static async Task<string> GetGameStatus(int whoseField)
+
+        public static async Task<string> GetShipStatus(string[,] field)
         {
-            var response = await client.GetAsync($"{basePath}condition/getgamestatus/"+whoseField);
+            string json = JsonConvert.SerializeObject(field.ToJaggedArray());
+
+            StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync($"{basePath}condition/getshipstatus", httpContent);
+
             return response.Content.ReadAsStringAsync().Result;
         }
+
         public static async Task<AttackResponse> SetPoint(string[,] enemyFieldHiden, string startPoint, int movesCounter)
         {
             AttackOptions attackOptions = new AttackOptions();
@@ -72,5 +88,23 @@ namespace SeaBattle.ConsoleUi.Requests
             var responseBody = JsonConvert.DeserializeObject<AttackResponse>(response);
             return responseBody;
         }
+
+        public static async Task<string> SmartAttack(string[,] field, string startPoint)
+        {
+            AttackOptions attackOptions = new AttackOptions();
+            attackOptions.EnemyFieldHiden = field.ToJaggedArray();
+            attackOptions.StartPoint = startPoint;
+
+            string json = JsonConvert.SerializeObject(attackOptions);
+
+            StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync($"{basePath}attack/SmartAttack", httpContent).Result.Content.ReadAsStringAsync();
+            return response;
+        }
+
+        
+
+
     }
 }

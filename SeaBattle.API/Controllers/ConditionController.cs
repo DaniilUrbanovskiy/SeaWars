@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using SeaBattle.Application.Core;
 using SeaBattle.Application.DataAccess;
 using SeaBattle.Infrastructure.Domain;
+using SeaBattle.Infrastructure.Extentions;
 
 namespace SeaBattle.API.Controllers
 {
@@ -16,7 +17,7 @@ namespace SeaBattle.API.Controllers
     public class ConditionController : ControllerBase
     {
         [HttpGet("GetGameStatus/{whoseField}")]
-        public IActionResult GetGameStatus([FromRoute]WhoseField whoseField)
+        public IActionResult GetGameStatus([FromRoute] WhoseField whoseField)
         {
             bool isGameEnded = false;
             if (whoseField == WhoseField.EnemysField)
@@ -26,26 +27,17 @@ namespace SeaBattle.API.Controllers
             else
             {
                 isGameEnded = AvaibilityValidation.IsGameEnded(DataStorage.Field);
-            }           
+            }
             var serialized = JsonConvert.SerializeObject(isGameEnded);
             return Ok(serialized);
         }
-
-        [HttpPost("OwnInit")]
-        public IActionResult OwnInit([FromBody]ShipOtions shipOtions)
+        [HttpPost("GetShipStatus")]
+        public IActionResult GetShipStatus([FromBody] string[][] field)
         {
-            Field field = DataStorage.Field;
-            bool isHorizontal = shipOtions.Direction == Direction.Horizontal ? true : false;
-            bool isPuted = FieldHandler.InicializeFieldByYourself(field.MainField, shipOtions.Point, shipOtions.DecksCount, isHorizontal);
-            var serialized = JsonConvert.SerializeObject(field.MainField);
-            if (isPuted == true)
-            {
-                return Ok(serialized);
-            }
-            else
-            {
-                return BadRequest(serialized);
-            }
+            string hittedShip = AvaibilityValidation.IsHittedShip(field.ToDoubleDimension());           
+            var serialized = JsonConvert.SerializeObject(hittedShip);
+            return Ok(serialized);
         }
+ 
     }
 }

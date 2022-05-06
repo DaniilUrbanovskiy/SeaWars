@@ -141,7 +141,7 @@ namespace SeaBattle.Application.Core
                 }
             }
         }
-        public static string SmartAttack(Field field, string startPoint)
+        public static string SmartAttack(string[,] field, string startPoint)
         {
             Point point = Ships.ConvertStringToPoint(startPoint);
             int horizontalPoint = point.X;
@@ -159,14 +159,14 @@ namespace SeaBattle.Application.Core
             }
             return pointToAttack;
         }
-        public static string CheckElementAroundPoint(Field field, int verticalPoint, int horizontalPoint, string pointToAttack, string mark, string markTwo)
+        public static string CheckElementAroundPoint(string[,] field, int verticalPoint, int horizontalPoint, string pointToAttack, string mark, string markTwo)
         {
             int y = default;
             int z = 0;
             int c = -1;
             for (int i = 0; i < 4; i++)
             {
-                if (field.MainField[verticalPoint + c, horizontalPoint + z] == mark | field.MainField[verticalPoint + c, horizontalPoint + z] == markTwo)
+                if (field[verticalPoint + c, horizontalPoint + z] == mark | field[verticalPoint + c, horizontalPoint + z] == markTwo)
                 {
                     if (mark == "O")
                     {
@@ -195,46 +195,46 @@ namespace SeaBattle.Application.Core
             }
             return pointToAttack;
         }
-        public static string CreateAttackPointForHittedShips(Field field, int verticalPoint, int horizontalPoint, string pointToAttack)
+        public static string CreateAttackPointForHittedShips(string[,] field, int verticalPoint, int horizontalPoint, string pointToAttack)
         {
             int y = default;
             int z = 0;
             int c = -1;
             for (int i = 0; i < 4; i++)
             {
-                if (field.MainField[verticalPoint + c, horizontalPoint + z] == "O")
+                if (field[verticalPoint + c, horizontalPoint + z] == "O")
                 {
                     if (verticalPoint == verticalPoint + c)
                     {
-                        if (field.MainField[verticalPoint + c, horizontalPoint + z + 1] == "#" | field.MainField[verticalPoint + c, horizontalPoint + z + 1] == "0")
+                        if (field[verticalPoint + c, horizontalPoint + z + 1] == "#" | field[verticalPoint + c, horizontalPoint + z + 1] == "0")
                         {
                             pointToAttack = Ships.ConvertPointToString(horizontalPoint + z + 1, verticalPoint + c);
                             return pointToAttack;
                         }
-                        if (field.MainField[verticalPoint + c, horizontalPoint + z + 1] == "O")
+                        if (field[verticalPoint + c, horizontalPoint + z + 1] == "O")
                         {
-                            if (field.MainField[verticalPoint + c, horizontalPoint + z + 2] == "#" | field.MainField[verticalPoint + c, horizontalPoint + z + 2] == "0")
+                            if (field[verticalPoint + c, horizontalPoint + z + 2] == "#" | field[verticalPoint + c, horizontalPoint + z + 2] == "0")
                             {
                                 pointToAttack = Ships.ConvertPointToString(horizontalPoint + z + 2, verticalPoint + c);
                                 return pointToAttack;
                             }
-                            if (field.MainField[verticalPoint + c, horizontalPoint + z + 2] == "*")
+                            if (field[verticalPoint + c, horizontalPoint + z + 2] == "*")
                             {
                                 pointToAttack = Ships.ConvertPointToString(horizontalPoint + z - 2, verticalPoint + c);
                                 return pointToAttack;
                             }
-                            if (field.MainField[verticalPoint + c, horizontalPoint + z + 2] == "|")
+                            if (field[verticalPoint + c, horizontalPoint + z + 2] == "|")
                             {
                                 pointToAttack = Ships.ConvertPointToString(horizontalPoint + z - 2, verticalPoint + c);
                                 return pointToAttack;
                             }
                         }
-                        if (field.MainField[verticalPoint + c, horizontalPoint + z + 1] == "|")
+                        if (field[verticalPoint + c, horizontalPoint + z + 1] == "|")
                         {
                             pointToAttack = Ships.ConvertPointToString(horizontalPoint + z - 2, verticalPoint + c);
                             return pointToAttack;
                         }
-                        if (field.MainField[verticalPoint + c, horizontalPoint + z + 1] == "*")
+                        if (field[verticalPoint + c, horizontalPoint + z + 1] == "*")
                         {
                             pointToAttack = Ships.ConvertPointToString(horizontalPoint + z - 2, verticalPoint + c);
                             return pointToAttack;
@@ -242,35 +242,35 @@ namespace SeaBattle.Application.Core
                     }
                     if (horizontalPoint == horizontalPoint + z)
                     {
-                        if (field.MainField[verticalPoint + c + 1, horizontalPoint + z] == "#" | field.MainField[verticalPoint + c + 1, horizontalPoint + z] == "0")
+                        if (field[verticalPoint + c + 1, horizontalPoint + z] == "#" | field[verticalPoint + c + 1, horizontalPoint + z] == "0")
                         {
                             pointToAttack = Ships.ConvertPointToString(horizontalPoint + z, verticalPoint + c + 1);
                             return pointToAttack;
                         }
-                        if (field.MainField[verticalPoint + c + 1, horizontalPoint + z] == "O")
+                        if (field[verticalPoint + c + 1, horizontalPoint + z] == "O")
                         {
-                            if (field.MainField[verticalPoint + c + 2, horizontalPoint + z] == "#" | field.MainField[verticalPoint + c + 2, horizontalPoint + z] == "0")
+                            if (field[verticalPoint + c + 2, horizontalPoint + z] == "#" | field[verticalPoint + c + 2, horizontalPoint + z] == "0")
                             {
                                 pointToAttack = Ships.ConvertPointToString(horizontalPoint + z, verticalPoint + c + 2);
                                 return pointToAttack;
                             }
-                            if (field.MainField[verticalPoint + c + 2, horizontalPoint + z] == "*")
+                            if (field[verticalPoint + c + 2, horizontalPoint + z] == "*")
                             {
                                 pointToAttack = Ships.ConvertPointToString(horizontalPoint + z, verticalPoint + c - 2);
                                 return pointToAttack;
                             }
-                            if (field.MainField[verticalPoint + c + 2, horizontalPoint + z] == "-")
+                            if (field[verticalPoint + c + 2, horizontalPoint + z] == "-")
                             {
                                 pointToAttack = Ships.ConvertPointToString(horizontalPoint + z, verticalPoint + c - 2);
                                 return pointToAttack;
                             }
                         }
-                        if (field.MainField[verticalPoint + c + 1, horizontalPoint + z] == "-")
+                        if (field[verticalPoint + c + 1, horizontalPoint + z] == "-")
                         {
                             pointToAttack = Ships.ConvertPointToString(horizontalPoint + z, verticalPoint + c - 2);
                             return pointToAttack;
                         }
-                        if (field.MainField[verticalPoint + c + 1, horizontalPoint + z] == "*")
+                        if (field[verticalPoint + c + 1, horizontalPoint + z] == "*")
                         {
                             pointToAttack = Ships.ConvertPointToString(horizontalPoint + z, verticalPoint + c - 2);
                             return pointToAttack;
@@ -297,29 +297,29 @@ namespace SeaBattle.Application.Core
             }
             return pointToAttack;
         }
-        public static bool KilledOrNotSimplified(Field enemysField, int horizontalPoint, int verticalPoint)
+        public static bool KilledOrNotSimplified(string[,] enemysField, int horizontalPoint, int verticalPoint)
         {
             int counter = 0;
-            while (enemysField.MainField[verticalPoint, horizontalPoint + counter] == "O" | enemysField.MainField[verticalPoint, horizontalPoint + counter] == "0")
+            while (enemysField[verticalPoint, horizontalPoint + counter] == "O" | enemysField[verticalPoint, horizontalPoint + counter] == "0")
             {
                 counter--;
             }
-            while (enemysField.MainField[verticalPoint, horizontalPoint + counter + 1] == "O" | enemysField.MainField[verticalPoint, horizontalPoint + counter + 1] == "0")
+            while (enemysField[verticalPoint, horizontalPoint + counter + 1] == "O" | enemysField[verticalPoint, horizontalPoint + counter + 1] == "0")
             {
-                if (enemysField.MainField[verticalPoint, horizontalPoint + counter + 1] == "0")
+                if (enemysField[verticalPoint, horizontalPoint + counter + 1] == "0")
                 {
                     return false;
                 }
                 counter++;
             }
             counter = 0;
-            while (enemysField.MainField[verticalPoint + counter, horizontalPoint] == "O" | enemysField.MainField[verticalPoint + counter, horizontalPoint] == "0")
+            while (enemysField[verticalPoint + counter, horizontalPoint] == "O" | enemysField[verticalPoint + counter, horizontalPoint] == "0")
             {
                 counter--;
             }
-            while (enemysField.MainField[verticalPoint + counter + 1, horizontalPoint] == "O" | enemysField.MainField[verticalPoint + counter + 1, horizontalPoint] == "0")
+            while (enemysField[verticalPoint + counter + 1, horizontalPoint] == "O" | enemysField[verticalPoint + counter + 1, horizontalPoint] == "0")
             {
-                if (enemysField.MainField[verticalPoint + counter + 1, horizontalPoint] == "0")
+                if (enemysField[verticalPoint + counter + 1, horizontalPoint] == "0")
                 {
                     return false;
                 }
