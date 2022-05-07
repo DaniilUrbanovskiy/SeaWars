@@ -42,9 +42,9 @@ namespace SeaBattle.ConsoleUi
                 Console.ReadLine();
                 Console.Clear();
 
-                var enemyFieldHiden = await RequestModel.GetField(2);
-                var enemyField = await RequestModel.GetInitField(2);
-                ShowField(enemyFieldHiden);
+                var enemyField = await RequestModel.GetField(2);
+                enemyField = await RequestModel.GetInitField(2);
+                ShowField(enemyField, isComputerField: true);
 
                 Console.WriteLine("Enter point to attack enemy's ship:");
 
@@ -60,12 +60,12 @@ namespace SeaBattle.ConsoleUi
                         while (attackStatus != AttackStatus.Missed)
                         {
                             Console.Clear();
-                            ShowField(enemyFieldHiden);
+                            ShowField(enemyField, isComputerField: true);
                             Console.WriteLine("Enter point to attack enemy's ship:");
                             startPoint = Console.ReadLine();
-                            AttackResponse attackResponse = RequestModel.SetPoint(enemyFieldHiden, startPoint, 1).Result;
+                            AttackResponse attackResponse = RequestModel.SetPoint(enemyField, startPoint, 1).Result;
                             attackStatus = attackResponse.AttackStatus;
-                            enemyFieldHiden = attackResponse.EnemyFieldHiden.ToDoubleDimension();
+                            enemyField = attackResponse.Field.ToDoubleDimension();
                             isGameEnded = bool.Parse(await RequestModel.GetGameStatus(2));
                             Console.Clear();
                             if (isGameEnded == true)
@@ -77,7 +77,7 @@ namespace SeaBattle.ConsoleUi
                         {
                             break;
                         }
-                        ShowField(enemyFieldHiden);
+                        ShowField(enemyField, isComputerField: true);
                         Console.WriteLine($"You attacked ({startPoint})\n");
                         Console.WriteLine("Press (Enter) to give enemy his move:");
                         Console.ReadLine();
@@ -115,7 +115,7 @@ namespace SeaBattle.ConsoleUi
                             }
                             AttackResponse attackResponse = RequestModel.SetPoint(field, startPoint, 2).Result;
                             attackStatus = attackResponse.AttackStatus;
-                            field = attackResponse.EnemyFieldHiden.ToDoubleDimension();
+                            field = attackResponse.Field.ToDoubleDimension();
                             if (attackStatus == AttackStatus.Hitted)
                             {
                                 nextPointToAttack = startPoint;
@@ -140,7 +140,7 @@ namespace SeaBattle.ConsoleUi
                 if (movesCounter % 2 != 0)
                 {
                     Console.Clear();
-                    ShowField(enemyFieldHiden);
+                    ShowField(enemyField, isComputerField: true);
                     Console.WriteLine("You win!");
                     Console.ReadLine();
                 }
@@ -204,18 +204,29 @@ namespace SeaBattle.ConsoleUi
 
             return field;
         }
-        public static void ShowField(string [,] field)
+        public static void ShowField(string [,] field, bool isComputerField = false)
          {
             for (int i = 0; i < 14; i++)
             {
                 for (int j = 0; j < 14; j++)
                 {
-                    if (field[i, j] == "0")
+                    if (isComputerField == false)
                     {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Write(field[i, j] + " ");
-                        Console.ForegroundColor = ConsoleColor.White;
-                        continue;
+                        if (field[i, j] == "0")
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write(field[i, j] + " ");
+                            Console.ForegroundColor = ConsoleColor.White;
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if (field[i, j] == "0")
+                        {
+                            Console.Write("#" + " ");                            
+                            continue;
+                        }
                     }
                     if (field[i, j] == "*")
                     {

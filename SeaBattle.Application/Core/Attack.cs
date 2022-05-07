@@ -9,42 +9,35 @@ namespace SeaBattle.Application.Core
 {
     public class Attack
     {
-        public static AttackStatus AttackTheShip(Field enemysField, ref string[,] enemysFieldHiden, string pointToAtatck, int movesCounter)
+        public static AttackStatus AttackTheShip(Field field, string pointToAtatck)
         {
             Point point = Ships.ConvertStringToPoint(pointToAtatck);
             int horizontalPoint = point.X;
             int verticalPoint = point.Y;
 
-            if (enemysField.MainField[verticalPoint, horizontalPoint] == "*")
+            if (field.MainField[verticalPoint, horizontalPoint] == "*")
             {
                 return AttackStatus.Failed;
             }
-            if (enemysField.MainField[verticalPoint, horizontalPoint] == "O")
+            if (field.MainField[verticalPoint, horizontalPoint] == "O")
             {
                 return AttackStatus.Failed;
             }
-            if (enemysField.MainField[verticalPoint, horizontalPoint] == "#")
+            if (field.MainField[verticalPoint, horizontalPoint] == "#")
             {
-                enemysField.MainField[verticalPoint, horizontalPoint] = "*";
-                if (movesCounter % 2 != 0)
-                {
-                    enemysFieldHiden[verticalPoint, horizontalPoint] = "*";
-                }
+                field.MainField[verticalPoint, horizontalPoint] = "*";
             }
-            if (enemysField.MainField[verticalPoint, horizontalPoint] == "0")
+            if (field.MainField[verticalPoint, horizontalPoint] == "0")
             {
-                enemysField.MainField[verticalPoint, horizontalPoint] = "O";
-                if (movesCounter % 2 != 0)
-                {
-                    enemysFieldHiden[verticalPoint, horizontalPoint] = "O";
-                }
+                field.MainField[verticalPoint, horizontalPoint] = "O";
+
                 bool isHorizontal = false;
                 int decksCounter = default;
                 int firstShipDeck = default;
-                bool isKilled = KilledOrNot(enemysField, horizontalPoint, verticalPoint, ref isHorizontal, ref decksCounter, ref firstShipDeck);
+                bool isKilled = KilledOrNot(field, horizontalPoint, verticalPoint, ref isHorizontal, ref decksCounter, ref firstShipDeck);
                 if (isKilled == true)
                 {
-                    ShipsFuneral(enemysField, enemysFieldHiden, movesCounter, horizontalPoint, verticalPoint, isHorizontal, decksCounter, firstShipDeck);
+                    ShipsFuneral(field, horizontalPoint, verticalPoint, isHorizontal, decksCounter, firstShipDeck);
                     return AttackStatus.Killed;
                 }
                 else
@@ -55,18 +48,18 @@ namespace SeaBattle.Application.Core
             }
             return AttackStatus.Missed;
         }
-        public static bool KilledOrNot(Field enemysField, int horizontalPoint, int verticalPoint, ref bool isHorizontal, ref int decksCounter, ref int firstShipDeck)
+        public static bool KilledOrNot(Field field, int horizontalPoint, int verticalPoint, ref bool isHorizontal, ref int decksCounter, ref int firstShipDeck)
         {
             int countOfStepsInOneDirection = 0;
             int counter = 0;
-            while (enemysField.MainField[verticalPoint, horizontalPoint + counter] == "O" | enemysField.MainField[verticalPoint, horizontalPoint + counter] == "0")
+            while (field.MainField[verticalPoint, horizontalPoint + counter] == "O" | field.MainField[verticalPoint, horizontalPoint + counter] == "0")
             {
                 counter--;
                 firstShipDeck = -counter;
             }
-            while (enemysField.MainField[verticalPoint, horizontalPoint + counter + 1] == "O" | enemysField.MainField[verticalPoint, horizontalPoint + counter + 1] == "0")
+            while (field.MainField[verticalPoint, horizontalPoint + counter + 1] == "O" | field.MainField[verticalPoint, horizontalPoint + counter + 1] == "0")
             {
-                if (enemysField.MainField[verticalPoint, horizontalPoint + counter + 1] == "0")
+                if (field.MainField[verticalPoint, horizontalPoint + counter + 1] == "0")
                 {
                     return false;
                 }
@@ -79,7 +72,7 @@ namespace SeaBattle.Application.Core
                 isHorizontal = true;
             }
             counter = 0;
-            while (enemysField.MainField[verticalPoint + counter, horizontalPoint] == "O" | enemysField.MainField[verticalPoint + counter, horizontalPoint] == "0")
+            while (field.MainField[verticalPoint + counter, horizontalPoint] == "O" | field.MainField[verticalPoint + counter, horizontalPoint] == "0")
             {
                 counter--;
                 if (isHorizontal == false)
@@ -87,9 +80,9 @@ namespace SeaBattle.Application.Core
                     firstShipDeck = -counter;
                 }
             }
-            while (enemysField.MainField[verticalPoint + counter + 1, horizontalPoint] == "O" | enemysField.MainField[verticalPoint + counter + 1, horizontalPoint] == "0")
+            while (field.MainField[verticalPoint + counter + 1, horizontalPoint] == "O" | field.MainField[verticalPoint + counter + 1, horizontalPoint] == "0")
             {
-                if (enemysField.MainField[verticalPoint + counter + 1, horizontalPoint] == "0")
+                if (field.MainField[verticalPoint + counter + 1, horizontalPoint] == "0")
                 {
                     return false;
                 }
@@ -100,7 +93,7 @@ namespace SeaBattle.Application.Core
             decksCounter -= 1;
             return true;
         }
-        private static void ShipsFuneral(Field enemysField, string[,] enemysFieldHiden, int movesCounter, int horizontalPoint, int verticalPoint, bool isHorizontal, int decksCounter, int firstShipDeck)
+        private static void ShipsFuneral(Field field, int horizontalPoint, int verticalPoint, bool isHorizontal, int decksCounter, int firstShipDeck)
         {
             firstShipDeck = firstShipDeck - 1;
 
@@ -125,19 +118,11 @@ namespace SeaBattle.Application.Core
                 {
                     if (N == 12 || N == 1) continue;
                     if (M == 12 || M == 1) continue;
-                    if (movesCounter % 2 != 0)
-                    {
-                        if (enemysFieldHiden[N, M] == "O")
-                        {
-                            continue;
-                        }
-                        enemysFieldHiden[N, M] = "*";
-                    }
-                    if (enemysField.MainField[N, M] == "O")
+                    if (field.MainField[N, M] == "O")
                     {
                         continue;
                     }
-                    enemysField.MainField[N, M] = "*";
+                    field.MainField[N, M] = "*";
                 }
             }
         }
@@ -297,29 +282,29 @@ namespace SeaBattle.Application.Core
             }
             return pointToAttack;
         }
-        public static bool KilledOrNotSimplified(string[,] enemysField, int horizontalPoint, int verticalPoint)
+        public static bool KilledOrNotSimplified(string[,] field, int horizontalPoint, int verticalPoint)
         {
             int counter = 0;
-            while (enemysField[verticalPoint, horizontalPoint + counter] == "O" | enemysField[verticalPoint, horizontalPoint + counter] == "0")
+            while (field[verticalPoint, horizontalPoint + counter] == "O" | field[verticalPoint, horizontalPoint + counter] == "0")
             {
                 counter--;
             }
-            while (enemysField[verticalPoint, horizontalPoint + counter + 1] == "O" | enemysField[verticalPoint, horizontalPoint + counter + 1] == "0")
+            while (field[verticalPoint, horizontalPoint + counter + 1] == "O" | field[verticalPoint, horizontalPoint + counter + 1] == "0")
             {
-                if (enemysField[verticalPoint, horizontalPoint + counter + 1] == "0")
+                if (field[verticalPoint, horizontalPoint + counter + 1] == "0")
                 {
                     return false;
                 }
                 counter++;
             }
             counter = 0;
-            while (enemysField[verticalPoint + counter, horizontalPoint] == "O" | enemysField[verticalPoint + counter, horizontalPoint] == "0")
+            while (field[verticalPoint + counter, horizontalPoint] == "O" | field[verticalPoint + counter, horizontalPoint] == "0")
             {
                 counter--;
             }
-            while (enemysField[verticalPoint + counter + 1, horizontalPoint] == "O" | enemysField[verticalPoint + counter + 1, horizontalPoint] == "0")
+            while (field[verticalPoint + counter + 1, horizontalPoint] == "O" | field[verticalPoint + counter + 1, horizontalPoint] == "0")
             {
-                if (enemysField[verticalPoint + counter + 1, horizontalPoint] == "0")
+                if (field[verticalPoint + counter + 1, horizontalPoint] == "0")
                 {
                     return false;
                 }

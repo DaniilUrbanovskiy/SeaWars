@@ -7,6 +7,6 @@ namespace SeaBattle.Infrastructure.Common
     public class AttackResponse
     {
         public AttackStatus AttackStatus { get; set; }
-        public string[][] EnemyFieldHiden { get; set; }
+        public string[][] Field { get; set; }
     }
 }

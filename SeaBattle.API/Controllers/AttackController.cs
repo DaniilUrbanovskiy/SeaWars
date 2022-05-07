@@ -23,17 +23,19 @@ namespace SeaBattle.API.Controllers
 
             if (options.MovesCounter == 1)
             {
-                attackStatus = Attack.AttackTheShip(DataStorage.EnemyField, ref field, options.StartPoint, options.MovesCounter);
+                DataStorage.EnemyField.MainField = field;
+                attackStatus = Attack.AttackTheShip(DataStorage.EnemyField, options.StartPoint);
+                field = DataStorage.EnemyField.MainField;
             }
             else
             {
                 DataStorage.Field.MainField = field;
-                attackStatus = Attack.AttackTheShip(DataStorage.Field, ref field, options.StartPoint, options.MovesCounter);
+                attackStatus = Attack.AttackTheShip(DataStorage.Field, options.StartPoint);
                 field = DataStorage.Field.MainField;
             }
 
             attackResponse.AttackStatus = attackStatus;
-            attackResponse.EnemyFieldHiden = field.ToJaggedArray();
+            attackResponse.Field = field.ToJaggedArray();
 
             var serialized = JsonConvert.SerializeObject(attackResponse);
 
