@@ -15,7 +15,7 @@ namespace SeaBattle.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CommonController : ControllerBase
+    public class GameController : ControllerBase
     {
         Random random = new Random();
 
@@ -34,7 +34,34 @@ namespace SeaBattle.API.Controllers
         public IActionResult GetGameId()
         {
             int gameId = random.Next(100);
+            DataStorage.GameId = gameId;
             return Ok(gameId);
+        }
+
+        [HttpPost("ConnectToGame")]
+        public IActionResult ConnectToGame([FromBody]int idGame)
+        {
+            string message = String.Empty;
+            if (DataStorage.GameId == idGame)
+            {
+                message = "Connected!";
+                DataStorage.IsConnected = true;
+            }
+            else
+            {
+                message = "Try again!";
+                DataStorage.IsConnected = false;
+            }
+            var serialized = JsonConvert.SerializeObject(message);
+            return Ok(serialized);
+        }
+
+        [HttpGet("GetConnectionStatus")]
+        public IActionResult GetConnectionStatus()
+        {
+            bool isConected = DataStorage.IsConnected;
+            var serialized = JsonConvert.SerializeObject(isConected);
+            return Ok(serialized);
         }
     }      
 }

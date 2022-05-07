@@ -28,6 +28,24 @@ namespace SeaBattle.API.Controllers
             {
                 DataStorage.EnemyField.MainField = field.MainField;
             }
+
+            var serialized = JsonConvert.SerializeObject(field.MainField);
+            return Ok(serialized);
+        }
+
+        [HttpGet("GetEnemyField/{whoseField}")]
+        public IActionResult GetEnemyField([FromRoute] WhoseField whoseField)
+        {
+            Field field = new Field();
+            if (whoseField == WhoseField.Field)
+            {
+                field.MainField = DataStorage.Field.MainField;
+            }
+            else
+            {
+                field.MainField = DataStorage.EnemyField.MainField;
+            }
+
             var serialized = JsonConvert.SerializeObject(field.MainField);
             return Ok(serialized);
         }
@@ -38,26 +56,20 @@ namespace SeaBattle.API.Controllers
             Field field = whoseField == WhoseField.Field ? DataStorage.Field : DataStorage.EnemyField;
 
             field.MainField = FieldHandler.InicializeFieldByRandom(field.MainField);
-            if (whoseField == WhoseField.Field)
-            {
-                DataStorage.Field.MainField = field.MainField;
-            }
-            if (whoseField == WhoseField.EnemysField)
-            {
-                DataStorage.EnemyField.MainField = field.MainField;
-            }
 
             var serialized = JsonConvert.SerializeObject(field.MainField);
             return Ok(serialized);
         }
 
-        [HttpPost("OwnInit")]
-        public IActionResult OwnInit([FromBody]ShipOtions shipOtions)
+        [HttpPost("OwnInit/{whoseField}")]
+        public IActionResult OwnInit([FromBody]ShipOtions shipOtions, [FromRoute]WhoseField whoseField)
         {
-            Field field = DataStorage.Field;
+            Field field = whoseField == WhoseField.Field ? DataStorage.Field : DataStorage.EnemyField;
+
             bool isHorizontal = shipOtions.Direction == Direction.Horizontal ? true : false;
             bool isPuted = FieldHandler.InicializeFieldByYourself(field.MainField, shipOtions.Point, shipOtions.DecksCount, isHorizontal);
             var serialized = JsonConvert.SerializeObject(field.MainField);
+
             if (isPuted == true)
             {
                 return Ok(serialized);

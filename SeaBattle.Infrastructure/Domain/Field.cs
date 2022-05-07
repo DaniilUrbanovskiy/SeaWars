@@ -7,5 +7,6 @@ namespace SeaBattle.Infrastructure.Domain
     public class Field
     {
         public string[,] MainField { get; set; }
+        public bool IsCreated { get; set; } = false;
     }
 }

@@ -29,7 +29,7 @@ namespace SeaBattle.ConsoleUi
                 byte userChoice = byte.Parse(Console.ReadLine());
                 if (userChoice == 1)
                 {
-                    field = await InicializeByYourself(field);
+                    field = await InicializeByYourself(field, 1);
                 }
                 else
                 {
@@ -44,7 +44,7 @@ namespace SeaBattle.ConsoleUi
 
                 var enemyField = await RequestModel.GetField(2);
                 enemyField = await RequestModel.GetInitField(2);
-                ShowField(enemyField, isComputerField: true);
+                ShowField(enemyField, isEnemyField: true);
 
                 Console.WriteLine("Enter point to attack enemy's ship:");
 
@@ -60,7 +60,7 @@ namespace SeaBattle.ConsoleUi
                         while (attackStatus != AttackStatus.Missed)
                         {
                             Console.Clear();
-                            ShowField(enemyField, isComputerField: true);
+                            ShowField(enemyField, isEnemyField: true);
                             Console.WriteLine("Enter point to attack enemy's ship:");
                             startPoint = Console.ReadLine();
                             AttackResponse attackResponse = RequestModel.SetPoint(enemyField, startPoint, 1).Result;
@@ -77,7 +77,7 @@ namespace SeaBattle.ConsoleUi
                         {
                             break;
                         }
-                        ShowField(enemyField, isComputerField: true);
+                        ShowField(enemyField, isEnemyField: true);
                         Console.WriteLine($"You attacked ({startPoint})\n");
                         Console.WriteLine("Press (Enter) to give enemy his move:");
                         Console.ReadLine();
@@ -140,7 +140,7 @@ namespace SeaBattle.ConsoleUi
                 if (movesCounter % 2 != 0)
                 {
                     Console.Clear();
-                    ShowField(enemyField, isComputerField: true);
+                    ShowField(enemyField, isEnemyField: true);
                     Console.WriteLine("You win!");
                     Console.ReadLine();
                 }
@@ -155,21 +155,79 @@ namespace SeaBattle.ConsoleUi
             else
             {
                 Console.WriteLine("Choose option:\n1.Create game\n2.Connect to game");
-                byte userChoice = byte.Parse(Console.ReadLine());
+                int userChoice = int.Parse(Console.ReadLine());
+                int userChoiceDec = default;
+                if (userChoice == 1)
+                {
+                    userChoiceDec = 2;
+                }
+                else
+                {
+                    userChoiceDec = 1;
+                }  
                 Console.Clear();
 
                 if (userChoice == 1)
                 {
                     int gameId = await RequestModel.GetGameId();
+                    Console.WriteLine($"Your game ID: {gameId}\nWaiting second player connection...");
+                    bool isConnected = false;
+                    while (isConnected == false)
+                    {
+                        Thread.Sleep(500);
+                        isConnected = bool.Parse(await RequestModel.GetConnectionStatus());
+                    }
+                    Console.WriteLine("Connected!");
                 }
                 else
                 {
-                    Console.WriteLine("Enter Game ID:");
-                    int gameId = int.Parse(Console.ReadLine());
+                    string message = "Try again!";
+                    while (message == "Try again!")
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Enter game ID:");
+                        int gameId = int.Parse(Console.ReadLine());
+                        message = await RequestModel.ConnectToGame(gameId);
+                        Console.WriteLine(message);
+                        Thread.Sleep(1000);
+                    }
                 }
-            }        
+                Console.WriteLine("Press Enter to start!");
+                Console.Clear();
+                var field = await RequestModel.GetField(userChoice);
+                ShowField(field);
+
+                Console.WriteLine("Choose option:\n1. Generate by yourself\n2. Generate by random");
+                byte userChoiceHowToGenerate = byte.Parse(Console.ReadLine());
+                if (userChoiceHowToGenerate == 1)
+                {
+                    field = await InicializeByYourself(field, userChoice);
+                }
+                else
+                {
+                    field = await RequestModel.GetInitField(userChoice);
+                }
+                Console.Clear();
+                ShowField(field);
+
+                Console.WriteLine("Press Enter if you are ready!");
+                Console.ReadLine();
+                await RequestModel.SetReadyStatus(userChoice);
+                bool isEnemyReady = false;
+                while (isEnemyReady == false)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Wait for your enemy...");
+                    isEnemyReady = bool.Parse(await RequestModel.GetReadyStatus(userChoiceDec));
+                    Thread.Sleep(500);
+                }
+                Console.Clear();
+                var enemyField = await RequestModel.GetEnemyField(userChoiceDec);
+                ShowField(enemyField, isEnemyField: true);
+                Console.ReadLine();
+            }             
         }
-        private static async Task<string[,]> InicializeByYourself(string[,] field)
+        private static async Task<string[,]> InicializeByYourself(string[,] field, int whosField)
         {
             string[,] lastAttempt = field;
             int c = 1;
@@ -187,7 +245,7 @@ namespace SeaBattle.ConsoleUi
                             Console.WriteLine("Enter (true), if you want locate your ship horizontal, and (false), if vertical:");
                             position = bool.Parse(Console.ReadLine());
                         }
-                        field = await RequestModel.PutShip(i, startPoint, position);
+                        field = await RequestModel.PutShip(i, startPoint, position, whosField);
                         if (field != null)
                         {
                             break;
@@ -201,16 +259,15 @@ namespace SeaBattle.ConsoleUi
                 }
                 c++;
             }
-
             return field;
         }
-        public static void ShowField(string [,] field, bool isComputerField = false)
+        public static void ShowField(string [,] field, bool isEnemyField = false)
          {
             for (int i = 0; i < 14; i++)
             {
                 for (int j = 0; j < 14; j++)
                 {
-                    if (isComputerField == false)
+                    if (isEnemyField == false)
                     {
                         if (field[i, j] == "0")
                         {

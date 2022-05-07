@@ -29,11 +29,11 @@ namespace SeaBattle.ConsoleUi.Requests
 
         public static async Task<string> GetGameStatus(int whoseField)
         {
-            var response = await client.GetAsync($"{basePath}condition/getgamestatus/" + whoseField);
+            var response = await client.GetAsync($"{basePath}status/getgamestatus/" + whoseField);
             return response.Content.ReadAsStringAsync().Result;
         }
 
-        public static async Task<string[,]> PutShip(int deckCount, string point, bool position)
+        public static async Task<string[,]> PutShip(int deckCount, string point, bool position, int whoseField)
         {
             ShipOtions ship = new ShipOtions();
             ship.DecksCount = deckCount;
@@ -50,7 +50,7 @@ namespace SeaBattle.ConsoleUi.Requests
 
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync($"{basePath}field/owninit", httpContent);
+            var response = await client.PostAsync($"{basePath}field/owninit/"+whoseField, httpContent);
             if (response.IsSuccessStatusCode)
             {
                 return response.Content.ReadAsStringAsync().Result.ToDoubleArray();
@@ -68,7 +68,7 @@ namespace SeaBattle.ConsoleUi.Requests
 
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync($"{basePath}condition/getshipstatus", httpContent).Result.Content.ReadAsStringAsync();
+            var response = await client.PostAsync($"{basePath}status/getshipstatus", httpContent).Result.Content.ReadAsStringAsync();
             var responseBody = JsonConvert.DeserializeObject<string>(response);
             return responseBody;
         }
@@ -106,15 +106,51 @@ namespace SeaBattle.ConsoleUi.Requests
 
         public static async Task<string> GetRandomPoint()
         {
-            var response = await client.GetAsync($"{basePath}common/getrandompoint").Result.Content.ReadAsStringAsync();
+            var response = await client.GetAsync($"{basePath}game/getrandompoint").Result.Content.ReadAsStringAsync();
             var responseBody = JsonConvert.DeserializeObject<string>(response);
             return responseBody;
         }
 
         public static async Task<int> GetGameId()
         {
-            var response = await client.GetAsync($"{basePath}common/getgameid").Result.Content.ReadAsStringAsync();
+            var response = await client.GetAsync($"{basePath}game/getgameid").Result.Content.ReadAsStringAsync();
             return int.Parse(response);
         }
+
+        public static async Task<string[,]> GetEnemyField(int whoseField)
+        {
+            var response = await client.GetAsync($"{basePath}field/getenemyfield/" +whoseField).Result.Content.ReadAsStringAsync();
+            return response.ToDoubleArray();
+        }
+
+        public static async Task SetReadyStatus(int whoseField)
+        {
+            var response = await client.PostAsync($"{basePath}status/setreadystatus/" + whoseField, null).Result.Content.ReadAsStringAsync();
+        }
+
+        public static async Task<string> GetReadyStatus(int whoseField)
+        {
+            var response = await client.GetAsync($"{basePath}status/getreadystatus/" + whoseField).Result.Content.ReadAsStringAsync();
+            return response;
+        }
+
+        public static async Task<string> GetConnectionStatus()
+        {
+            var response = await client.GetAsync($"{basePath}game/getconnectionstatus").Result.Content.ReadAsStringAsync();
+            return response;
+        }
+
+        public static async Task<string> ConnectToGame(int gameId)
+        {
+            string json = JsonConvert.SerializeObject(gameId);
+
+            StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync($"{basePath}game/connecttogame", httpContent).Result.Content.ReadAsStringAsync();
+            var responseBody = JsonConvert.DeserializeObject<string>(response);
+            return responseBody;
+        }
+
+
     }
 }

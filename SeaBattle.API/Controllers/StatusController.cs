@@ -14,7 +14,7 @@ namespace SeaBattle.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ConditionController : ControllerBase
+    public class StatusController : ControllerBase
     {
         [HttpGet("GetGameStatus/{whoseField}")]
         public IActionResult GetGameStatus([FromRoute] WhoseField whoseField)
@@ -38,6 +38,26 @@ namespace SeaBattle.API.Controllers
             string hittedShip = AvaibilityValidation.IsHittedShip(field.ToDoubleDimension());           
             var serialized = JsonConvert.SerializeObject(hittedShip);
             return Ok(serialized);
+        }
+
+        [HttpPost("SetReadyStatus/{whoseField}")]
+        public IActionResult SetReadyStatus([FromRoute]WhoseField whoseField)
+        {
+            if (whoseField == WhoseField.Field)
+            {
+                DataStorage.Field.IsCreated = true;
+            }
+            else
+            {
+                DataStorage.EnemyField.IsCreated = true;
+            }
+            return Ok();
+        }
+
+        [HttpGet("GetReadyStatus/{whoseField}")]
+        public IActionResult GetReadyStatus([FromRoute] WhoseField whoseField)
+        {
+            return Ok(whoseField == WhoseField.Field ? DataStorage.Field.IsCreated : DataStorage.EnemyField.IsCreated);
         }
 
     }
