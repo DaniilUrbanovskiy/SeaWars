@@ -15,56 +15,56 @@ namespace SeaBattle.API.Controllers
     [Route("[controller]")]
     public class FieldController : ControllerBase
     {
-        [HttpGet("{whoseField}")]
-        public IActionResult CreateField([FromRoute]WhoseField whoseField)
+        [HttpGet("{whoseField}/{gameId}")]
+        public IActionResult CreateField([FromRoute]WhoseField whoseField, [FromRoute]int gameId)
         {
             Field field = new Field();
             field.MainField = FieldHandler.CreateField();
             if (whoseField == WhoseField.Field)
             {
-                DataStorage.Field.MainField = field.MainField;
+                DataStorage.Games[gameId].Field.MainField = field.MainField;
             }
             else
             {
-                DataStorage.EnemyField.MainField = field.MainField;
+                DataStorage.Games[gameId].EnemyField.MainField = field.MainField;
             }
-
             var serialized = JsonConvert.SerializeObject(field.MainField);
+
             return Ok(serialized);
         }
 
-        [HttpGet("GetEnemyField/{whoseField}")]
-        public IActionResult GetEnemyField([FromRoute] WhoseField whoseField)
+        [HttpGet("GetEnemyField/{whoseField}/{gameId}")]
+        public IActionResult GetEnemyField([FromRoute] WhoseField whoseField, [FromRoute] int gameId)
         {
             Field field = new Field();
             if (whoseField == WhoseField.Field)
             {
-                field.MainField = DataStorage.Field.MainField;
+                field.MainField = DataStorage.Games[gameId].Field.MainField;
             }
             else
             {
-                field.MainField = DataStorage.EnemyField.MainField;
+                field.MainField = DataStorage.Games[gameId].EnemyField.MainField;
             }
-
             var serialized = JsonConvert.SerializeObject(field.MainField);
+
             return Ok(serialized);
         }
 
-        [HttpGet("RandInit/{whoseField}")]
-        public IActionResult RandInit([FromRoute]WhoseField whoseField)
+        [HttpGet("RandInit/{whoseField}/{gameId}")]
+        public IActionResult RandInit([FromRoute]WhoseField whoseField, [FromRoute] int gameId)
         {
-            Field field = whoseField == WhoseField.Field ? DataStorage.Field : DataStorage.EnemyField;
+            Field field = whoseField == WhoseField.Field ? DataStorage.Games[gameId].Field : DataStorage.Games[gameId].EnemyField;
 
             field.MainField = FieldHandler.InicializeFieldByRandom(field.MainField);
-
             var serialized = JsonConvert.SerializeObject(field.MainField);
+
             return Ok(serialized);
         }
 
-        [HttpPost("OwnInit/{whoseField}")]
-        public IActionResult OwnInit([FromBody]ShipOtions shipOtions, [FromRoute]WhoseField whoseField)
+        [HttpPost("OwnInit/{whoseField}/{gameId}")]
+        public IActionResult OwnInit([FromBody]ShipOtions shipOtions, [FromRoute]WhoseField whoseField, [FromRoute] int gameId)
         {
-            Field field = whoseField == WhoseField.Field ? DataStorage.Field : DataStorage.EnemyField;
+            Field field = whoseField == WhoseField.Field ? DataStorage.Games[gameId].Field : DataStorage.Games[gameId].EnemyField;
 
             bool isHorizontal = shipOtions.Direction == Direction.Horizontal ? true : false;
             bool isPuted = FieldHandler.InicializeFieldByYourself(field.MainField, shipOtions.Point, shipOtions.DecksCount, isHorizontal);

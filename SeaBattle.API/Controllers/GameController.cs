@@ -25,8 +25,8 @@ namespace SeaBattle.API.Controllers
             int num = random.Next(1, 11);
             char let = new char().GetRandomLetter();
             string startPoint = $"{Convert.ToString(num) + let}";
-
             var serialized = JsonConvert.SerializeObject(startPoint);
+
             return Ok(serialized);
         }
 
@@ -34,33 +34,38 @@ namespace SeaBattle.API.Controllers
         public IActionResult GetGameId()
         {
             int gameId = random.Next(100);
-            DataStorage.GameId = gameId;
+            Game currentGame = new Game();
+            currentGame.GameId = gameId;
+            DataStorage.Games.Add(currentGame.GameId, currentGame);
+
             return Ok(gameId);
         }
 
-        [HttpPost("ConnectToGame")]
-        public IActionResult ConnectToGame([FromBody]int idGame)
+        [HttpPost("ConnectToGame/{gameId}")]
+        public IActionResult ConnectToGame([FromBody]int enteredGameId, [FromRoute]int gameId)
         {
             string message = String.Empty;
-            if (DataStorage.GameId == idGame)
+            if (gameId == enteredGameId)
             {
                 message = "Connected!";
-                DataStorage.IsConnected = true;
+                DataStorage.Games[gameId].IsConnected = true;
             }
             else
             {
                 message = "Try again!";
-                DataStorage.IsConnected = false;
+                DataStorage.Games[gameId].IsConnected = false;
             }
             var serialized = JsonConvert.SerializeObject(message);
+
             return Ok(serialized);
         }
 
-        [HttpGet("GetConnectionStatus")]
-        public IActionResult GetConnectionStatus()
+        [HttpGet("GetConnectionStatus/{gameId}")]
+        public IActionResult GetConnectionStatus([FromRoute]int gameId)
         {
-            bool isConected = DataStorage.IsConnected;
+            bool isConected = DataStorage.Games[gameId].IsConnected;
             var serialized = JsonConvert.SerializeObject(isConected);
+
             return Ok(serialized);
         }
     }      

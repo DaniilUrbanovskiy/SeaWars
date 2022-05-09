@@ -12,31 +12,27 @@ namespace SeaBattle.API.Controllers
     [Route("[controller]")]
     public class AttackController : ControllerBase
     {
-        [HttpPost("SetPoint")]
-        public IActionResult SetPoint([FromBody]AttackOptions options)
+        [HttpPost("SetPoint/{gameId}")]
+        public IActionResult SetPoint([FromBody] AttackOptions options, [FromRoute]int gameId)
         {
             AttackResponse attackResponse = new AttackResponse();
 
             var field = options.Field.ToDoubleDimension();           
-
             AttackStatus attackStatus = default;
-
             if (options.MovesCounter == 1)
-            {
-                DataStorage.EnemyField.MainField = field;
-                attackStatus = Attack.AttackTheShip(DataStorage.EnemyField, options.StartPoint);
-                field = DataStorage.EnemyField.MainField;
+            {          
+                DataStorage.Games[gameId].EnemyField.MainField = field;
+                attackStatus = Attack.AttackTheShip(DataStorage.Games[gameId].EnemyField, options.StartPoint);
+                field = DataStorage.Games[gameId].EnemyField.MainField;
             }
             else
             {
-                DataStorage.Field.MainField = field;
-                attackStatus = Attack.AttackTheShip(DataStorage.Field, options.StartPoint);
-                field = DataStorage.Field.MainField;
+                DataStorage.Games[gameId].Field.MainField = field;
+                attackStatus = Attack.AttackTheShip(DataStorage.Games[gameId].Field, options.StartPoint);
+                field = DataStorage.Games[gameId].Field.MainField;
             }
-
             attackResponse.AttackStatus = attackStatus;
             attackResponse.Field = field.ToJaggedArray();
-
             var serialized = JsonConvert.SerializeObject(attackResponse);
 
             return Ok(serialized);
@@ -46,8 +42,8 @@ namespace SeaBattle.API.Controllers
         public IActionResult SmartAttack([FromBody]AttackOptions options)
         {
             string startPoint = Attack.SmartAttack(options.Field.ToDoubleDimension(), options.StartPoint);
-
             var serialized = JsonConvert.SerializeObject(startPoint);
+
             return Ok(serialized);
         }
     }

@@ -16,17 +16,27 @@ namespace SeaBattle.API.Controllers
     [Route("[controller]")]
     public class StatusController : ControllerBase
     {
-        [HttpGet("GetGameStatus/{whoseField}")]
-        public IActionResult GetGameStatus([FromRoute] WhoseField whoseField)
+        [HttpGet("GetGameStatus/{whoseField}/{gameId}")]
+        public IActionResult GetGameStatus([FromRoute] WhoseField whoseField, [FromRoute]int gameId)
         {
             bool isGameEnded = false;
             if (whoseField == WhoseField.EnemysField)
             {
-                isGameEnded = AvaibilityValidation.IsGameEnded(DataStorage.EnemyField);
+                //isGameEnded = AvaibilityValidation.IsGameEnded(DataStorage.EnemyField);
+
+                isGameEnded = AvaibilityValidation.IsGameEnded(DataStorage.Games[gameId].EnemyField);
             }
             else
             {
-                isGameEnded = AvaibilityValidation.IsGameEnded(DataStorage.Field);
+                //isGameEnded = AvaibilityValidation.IsGameEnded(DataStorage.Field);
+
+                isGameEnded = AvaibilityValidation.IsGameEnded(DataStorage.Games[gameId].Field);
+            }
+            if (isGameEnded == true)
+            {
+                //DataStorage.IsEnded = true;
+
+                DataStorage.Games.Remove(gameId);
             }
             var serialized = JsonConvert.SerializeObject(isGameEnded);
             return Ok(serialized);
@@ -37,27 +47,29 @@ namespace SeaBattle.API.Controllers
         {
             string hittedShip = AvaibilityValidation.IsHittedShip(field.ToDoubleDimension());           
             var serialized = JsonConvert.SerializeObject(hittedShip);
+
             return Ok(serialized);
         }
 
-        [HttpPost("SetReadyStatus/{whoseField}")]
-        public IActionResult SetReadyStatus([FromRoute]WhoseField whoseField)
+        [HttpPost("SetReadyStatus/{whoseField}/{gameId}")]
+        public IActionResult SetReadyStatus([FromRoute]WhoseField whoseField, [FromRoute] int gameId)
         {
             if (whoseField == WhoseField.Field)
             {
-                DataStorage.Field.IsCreated = true;
+                DataStorage.Games[gameId].Field.IsCreated = true;
             }
             else
             {
-                DataStorage.EnemyField.IsCreated = true;
+                DataStorage.Games[gameId].EnemyField.IsCreated = true;
             }
+
             return Ok();
         }
 
-        [HttpGet("GetReadyStatus/{whoseField}")]
-        public IActionResult GetReadyStatus([FromRoute] WhoseField whoseField)
+        [HttpGet("GetReadyStatus/{whoseField/{gameId}}")]
+        public IActionResult GetReadyStatus([FromRoute] WhoseField whoseField, [FromRoute] int gameId)
         {
-            return Ok(whoseField == WhoseField.Field ? DataStorage.Field.IsCreated : DataStorage.EnemyField.IsCreated);
+            return Ok(whoseField == WhoseField.Field ? DataStorage.Games[gameId].Field.IsCreated : DataStorage.Games[gameId].EnemyField.IsCreated);
         }
 
     }

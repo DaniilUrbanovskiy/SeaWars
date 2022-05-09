@@ -15,25 +15,25 @@ namespace SeaBattle.ConsoleUi.Requests
         private static readonly string basePath = "https://localhost:44373/";
         static HttpClient client = new HttpClient();
 
-        public static async Task<string[,]> GetField(int whoseField)
+        public static async Task<string[,]> GetField(int whoseField, int gameId)
         {
-            var response = await client.GetAsync($"{basePath}field/"+whoseField);
+            var response = await client.GetAsync($"{basePath}field/{whoseField}/{gameId}");
             return response.Content.ReadAsStringAsync().Result.ToDoubleArray();
         }
 
-        public static async Task<string[,]> GetInitField(int whoseField)
+        public static async Task<string[,]> GetInitField(int whoseField, int gameId)
         {
-            var response = await client.GetAsync($"{basePath}field/randinit/"+whoseField);
+            var response = await client.GetAsync($"{basePath}field/randinit/{whoseField}/{gameId}");
             return response.Content.ReadAsStringAsync().Result.ToDoubleArray();
         }
 
-        public static async Task<string> GetGameStatus(int whoseField)
+        public static async Task<string> GetGameStatus(int whoseField, int gameId)
         {
-            var response = await client.GetAsync($"{basePath}status/getgamestatus/" + whoseField);
+            var response = await client.GetAsync($"{basePath}status/getgamestatus/{whoseField}/{gameId}");
             return response.Content.ReadAsStringAsync().Result;
         }
 
-        public static async Task<string[,]> PutShip(int deckCount, string point, bool position, int whoseField)
+        public static async Task<string[,]> PutShip(int deckCount, string point, bool position, int whoseField, int gameId)
         {
             ShipOtions ship = new ShipOtions();
             ship.DecksCount = deckCount;
@@ -50,7 +50,7 @@ namespace SeaBattle.ConsoleUi.Requests
 
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync($"{basePath}field/owninit/"+whoseField, httpContent);
+            var response = await client.PostAsync($"{basePath}field/owninit/{whoseField}/{gameId}", httpContent);
             if (response.IsSuccessStatusCode)
             {
                 return response.Content.ReadAsStringAsync().Result.ToDoubleArray();
@@ -73,7 +73,7 @@ namespace SeaBattle.ConsoleUi.Requests
             return responseBody;
         }
 
-        public static async Task<AttackResponse> SetPoint(string[,] enemyFieldHiden, string startPoint, int movesCounter)
+        public static async Task<AttackResponse> SetPoint(string[,] enemyFieldHiden, string startPoint, int movesCounter, int gameId)
         {
             AttackOptions attackOptions = new AttackOptions();
             attackOptions.Field = enemyFieldHiden.ToJaggedArray();
@@ -84,7 +84,7 @@ namespace SeaBattle.ConsoleUi.Requests
 
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync($"{basePath}attack/setpoint", httpContent).Result.Content.ReadAsStringAsync();
+            var response = await client.PostAsync($"{basePath}attack/setpoint/" + gameId, httpContent).Result.Content.ReadAsStringAsync();
             var responseBody = JsonConvert.DeserializeObject<AttackResponse>(response);
             return responseBody;
         }
@@ -117,36 +117,36 @@ namespace SeaBattle.ConsoleUi.Requests
             return int.Parse(response);
         }
 
-        public static async Task<string[,]> GetEnemyField(int whoseField)
+        public static async Task<string[,]> GetEnemyField(int whoseField, int gameId)
         {
-            var response = await client.GetAsync($"{basePath}field/getenemyfield/" +whoseField).Result.Content.ReadAsStringAsync();
+            var response = await client.GetAsync($"{basePath}field/getenemyfield/{whoseField}/{gameId}").Result.Content.ReadAsStringAsync();
             return response.ToDoubleArray();
         }
 
-        public static async Task SetReadyStatus(int whoseField)
+        public static async Task SetReadyStatus(int whoseField, int gameId)
         {
-            var response = await client.PostAsync($"{basePath}status/setreadystatus/" + whoseField, null).Result.Content.ReadAsStringAsync();
+            var response = await client.PostAsync($"{basePath}status/setreadystatus/{whoseField}/{gameId}", null).Result.Content.ReadAsStringAsync();
         }
 
-        public static async Task<string> GetReadyStatus(int whoseField)
+        public static async Task<string> GetReadyStatus(int whoseField, int gameId)
         {
-            var response = await client.GetAsync($"{basePath}status/getreadystatus/" + whoseField).Result.Content.ReadAsStringAsync();
+            var response = await client.GetAsync($"{basePath}status/getreadystatus/{whoseField}/{gameId}").Result.Content.ReadAsStringAsync();
             return response;
         }
 
-        public static async Task<string> GetConnectionStatus()
+        public static async Task<string> GetConnectionStatus(int gameId)
         {
-            var response = await client.GetAsync($"{basePath}game/getconnectionstatus").Result.Content.ReadAsStringAsync();
+            var response = await client.GetAsync($"{basePath}game/getconnectionstatus/" + gameId).Result.Content.ReadAsStringAsync();
             return response;
         }
 
-        public static async Task<string> ConnectToGame(int gameId)
+        public static async Task<string> ConnectToGame(int enteredGameId, int gameId)
         {
-            string json = JsonConvert.SerializeObject(gameId);
+            string json = JsonConvert.SerializeObject(enteredGameId);
 
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync($"{basePath}game/connecttogame", httpContent).Result.Content.ReadAsStringAsync();
+            var response = await client.PostAsync($"{basePath}game/connecttogame/" + gameId, httpContent).Result.Content.ReadAsStringAsync();
             var responseBody = JsonConvert.DeserializeObject<string>(response);
             return responseBody;
         }

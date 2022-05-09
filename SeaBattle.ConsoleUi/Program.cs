@@ -20,20 +20,22 @@ namespace SeaBattle.ConsoleUi
             byte botOrPlayer = byte.Parse(Console.ReadLine());
             Console.Clear();
 
+            int gameId = default;
             if (botOrPlayer == 1)
             {
-                var field = await RequestModel.GetField(1);
+                gameId = await RequestModel.GetGameId();
+                var field = await RequestModel.GetField(1, gameId);
                 ShowField(field);
 
                 Console.WriteLine("Choose option:\n1. Generate by yourself\n2. Generate by random");
                 byte userChoice = byte.Parse(Console.ReadLine());
                 if (userChoice == 1)
                 {
-                    field = await InicializeByYourself(field, 1);
+                    field = await InicializeByYourself(field, 1, gameId);
                 }
                 else
                 {
-                    field = await RequestModel.GetInitField(1);
+                    field = await RequestModel.GetInitField(1, gameId);
                 }
                 Console.Clear();
                 ShowField(field);
@@ -42,8 +44,8 @@ namespace SeaBattle.ConsoleUi
                 Console.ReadLine();
                 Console.Clear();
 
-                var enemyField = await RequestModel.GetField(2);
-                enemyField = await RequestModel.GetInitField(2);
+                var enemyField = await RequestModel.GetField(2, gameId);
+                enemyField = await RequestModel.GetInitField(2, gameId);
                 ShowField(enemyField, isEnemyField: true);
 
                 Console.WriteLine("Enter point to attack enemy's ship:");
@@ -63,10 +65,10 @@ namespace SeaBattle.ConsoleUi
                             ShowField(enemyField, isEnemyField: true);
                             Console.WriteLine("Enter point to attack enemy's ship:");
                             startPoint = Console.ReadLine();
-                            AttackResponse attackResponse = RequestModel.SetPoint(enemyField, startPoint, 1).Result;
+                            AttackResponse attackResponse = RequestModel.SetPoint(enemyField, startPoint, 1, gameId).Result;
                             attackStatus = attackResponse.AttackStatus;
                             enemyField = attackResponse.Field.ToDoubleDimension();
-                            isGameEnded = bool.Parse(await RequestModel.GetGameStatus(2));
+                            isGameEnded = bool.Parse(await RequestModel.GetGameStatus(2, gameId));
                             Console.Clear();
                             if (isGameEnded == true)
                             {
@@ -113,14 +115,14 @@ namespace SeaBattle.ConsoleUi
                             {
                                 startPoint = await RequestModel.SmartAttack(field, nextPointToAttack);
                             }
-                            AttackResponse attackResponse = RequestModel.SetPoint(field, startPoint, 2).Result;
+                            AttackResponse attackResponse = RequestModel.SetPoint(field, startPoint, 2, gameId).Result;
                             attackStatus = attackResponse.AttackStatus;
                             field = attackResponse.Field.ToDoubleDimension();
                             if (attackStatus == AttackStatus.Hitted)
                             {
                                 nextPointToAttack = startPoint;
                             }
-                            isGameEnded = isGameEnded = bool.Parse(await RequestModel.GetGameStatus(1));
+                            isGameEnded = isGameEnded = bool.Parse(await RequestModel.GetGameStatus(1, gameId));
                             Console.Clear();
                             if (isGameEnded == true)
                             {
@@ -169,13 +171,13 @@ namespace SeaBattle.ConsoleUi
 
                 if (userChoice == 1)
                 {
-                    int gameId = await RequestModel.GetGameId();
+                    gameId = await RequestModel.GetGameId();
                     Console.WriteLine($"Your game ID: {gameId}\nWaiting second player connection...");
                     bool isConnected = false;
                     while (isConnected == false)
                     {
                         Thread.Sleep(500);
-                        isConnected = bool.Parse(await RequestModel.GetConnectionStatus());
+                        isConnected = bool.Parse(await RequestModel.GetConnectionStatus(gameId));
                     }
                     Console.WriteLine("Connected!");
                 }
@@ -186,48 +188,48 @@ namespace SeaBattle.ConsoleUi
                     {
                         Console.Clear();
                         Console.WriteLine("Enter game ID:");
-                        int gameId = int.Parse(Console.ReadLine());
-                        message = await RequestModel.ConnectToGame(gameId);
+                        gameId = int.Parse(Console.ReadLine());
+                        message = await RequestModel.ConnectToGame(gameId, gameId);
                         Console.WriteLine(message);
                         Thread.Sleep(1000);
                     }
                 }
                 Console.WriteLine("Press Enter to start!");
                 Console.Clear();
-                var field = await RequestModel.GetField(userChoice);
+                var field = await RequestModel.GetField(userChoice, gameId);
                 ShowField(field);
 
                 Console.WriteLine("Choose option:\n1. Generate by yourself\n2. Generate by random");
                 byte userChoiceHowToGenerate = byte.Parse(Console.ReadLine());
                 if (userChoiceHowToGenerate == 1)
                 {
-                    field = await InicializeByYourself(field, userChoice);
+                    field = await InicializeByYourself(field, userChoice, gameId);
                 }
                 else
                 {
-                    field = await RequestModel.GetInitField(userChoice);
+                    field = await RequestModel.GetInitField(userChoice, gameId);
                 }
                 Console.Clear();
                 ShowField(field);
 
                 Console.WriteLine("Press Enter if you are ready!");
                 Console.ReadLine();
-                await RequestModel.SetReadyStatus(userChoice);
+                await RequestModel.SetReadyStatus(userChoice, gameId);
                 bool isEnemyReady = false;
                 while (isEnemyReady == false)
                 {
                     Console.Clear();
                     Console.WriteLine("Wait for your enemy...");
-                    isEnemyReady = bool.Parse(await RequestModel.GetReadyStatus(userChoiceDec));
+                    isEnemyReady = bool.Parse(await RequestModel.GetReadyStatus(userChoiceDec, gameId));
                     Thread.Sleep(500);
                 }
                 Console.Clear();
-                var enemyField = await RequestModel.GetEnemyField(userChoiceDec);
+                var enemyField = await RequestModel.GetEnemyField(userChoiceDec, gameId);
                 ShowField(enemyField, isEnemyField: true);
                 Console.ReadLine();
             }             
         }
-        private static async Task<string[,]> InicializeByYourself(string[,] field, int whosField)
+        private static async Task<string[,]> InicializeByYourself(string[,] field, int whosField, int gameId)
         {
             string[,] lastAttempt = field;
             int c = 1;
@@ -245,7 +247,7 @@ namespace SeaBattle.ConsoleUi
                             Console.WriteLine("Enter (true), if you want locate your ship horizontal, and (false), if vertical:");
                             position = bool.Parse(Console.ReadLine());
                         }
-                        field = await RequestModel.PutShip(i, startPoint, position, whosField);
+                        field = await RequestModel.PutShip(i, startPoint, position, whosField, gameId);
                         if (field != null)
                         {
                             break;
