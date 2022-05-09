@@ -46,9 +46,6 @@ namespace SeaBattle.ConsoleUi
 
                 var enemyField = await RequestModel.GetField(2, gameId);
                 enemyField = await RequestModel.GetInitField(2, gameId);
-                ShowField(enemyField, isEnemyField: true);
-
-                Console.WriteLine("Enter point to attack enemy's ship:");
 
                 int movesCounter = 0;
                 bool isGameEnded = false;
@@ -188,8 +185,9 @@ namespace SeaBattle.ConsoleUi
                     {
                         Console.Clear();
                         Console.WriteLine("Enter game ID:");
-                        gameId = int.Parse(Console.ReadLine());
-                        message = await RequestModel.ConnectToGame(gameId, gameId);
+                        int enteredGameId = int.Parse(Console.ReadLine());
+                        gameId = enteredGameId;
+                        message = await RequestModel.ConnectToGame(enteredGameId);
                         Console.WriteLine(message);
                         Thread.Sleep(1000);
                     }
@@ -226,7 +224,70 @@ namespace SeaBattle.ConsoleUi
                 Console.Clear();
                 var enemyField = await RequestModel.GetEnemyField(userChoiceDec, gameId);
                 ShowField(enemyField, isEnemyField: true);
-                Console.ReadLine();
+
+                int movesCounter = userChoiceDec;
+                bool isGameEnded = false;
+                while (isGameEnded == false)
+                {
+                    movesCounter++;
+                    AttackStatus attackStatus = 0;
+                    if (movesCounter % 2 != 0)
+                    {
+                        string startPoint = string.Empty;
+                        while (attackStatus != AttackStatus.Missed)
+                        {
+                            Console.Clear();
+                            ShowField(enemyField, isEnemyField: true);
+                            Console.WriteLine("Enter point to attack enemy's ship:");
+                            startPoint = Console.ReadLine();
+                            AttackResponse attackResponse = RequestModel.SetPoint(enemyField, startPoint, userChoice, gameId).Result;
+                            attackStatus = attackResponse.AttackStatus;
+                            enemyField = attackResponse.Field.ToDoubleDimension();
+                            isGameEnded = bool.Parse(await RequestModel.GetGameStatus(userChoiceDec, gameId));
+                            Console.Clear();
+                            if (isGameEnded == true)
+                            {
+                                break;
+                            }
+                        }
+                        if (isGameEnded == true)
+                        {
+                            break;
+                        }
+                        ShowField(enemyField, isEnemyField: true);
+                        Console.WriteLine($"You attacked ({startPoint})\n");
+                        Console.WriteLine("Press (Enter) to give enemy his move:");
+                        Console.ReadLine();
+                        await RequestModel.SetAttackCondition(userChoice, gameId);
+
+                    }
+                    else
+                    {
+                        while (true)
+                        {
+
+                        }
+                    }
+
+
+
+                }
+                if (movesCounter % 2 != 0)
+                {
+                    Console.Clear();
+                    ShowField(enemyField, isEnemyField: true);
+                    Console.WriteLine("You win!");
+                    Console.ReadLine();
+                }
+                else
+                {
+                    Console.Clear();
+                    ShowField(field);
+                    Console.WriteLine("You lose!");
+                    Console.ReadLine();
+                }
+
+
             }             
         }
         private static async Task<string[,]> InicializeByYourself(string[,] field, int whosField, int gameId)

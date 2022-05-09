@@ -16,7 +16,7 @@ namespace SeaBattle.ConsoleUi.Requests
         static HttpClient client = new HttpClient();
 
         public static async Task<string[,]> GetField(int whoseField, int gameId)
-        {
+        { 
             var response = await client.GetAsync($"{basePath}field/{whoseField}/{gameId}");
             return response.Content.ReadAsStringAsync().Result.ToDoubleArray();
         }
@@ -73,10 +73,10 @@ namespace SeaBattle.ConsoleUi.Requests
             return responseBody;
         }
 
-        public static async Task<AttackResponse> SetPoint(string[,] enemyFieldHiden, string startPoint, int movesCounter, int gameId)
+        public static async Task<AttackResponse> SetPoint(string[,] field, string startPoint, int movesCounter, int gameId)
         {
             AttackOptions attackOptions = new AttackOptions();
-            attackOptions.Field = enemyFieldHiden.ToJaggedArray();
+            attackOptions.Field = field.ToJaggedArray();
             attackOptions.StartPoint = startPoint;
             attackOptions.MovesCounter = movesCounter;
 
@@ -140,15 +140,26 @@ namespace SeaBattle.ConsoleUi.Requests
             return response;
         }
 
-        public static async Task<string> ConnectToGame(int enteredGameId, int gameId)
+        public static async Task<string> ConnectToGame(int enteredGameId)
         {
             string json = JsonConvert.SerializeObject(enteredGameId);
 
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync($"{basePath}game/connecttogame/" + gameId, httpContent).Result.Content.ReadAsStringAsync();
+            var response = await client.PostAsync($"{basePath}game/connecttogame", httpContent).Result.Content.ReadAsStringAsync();
             var responseBody = JsonConvert.DeserializeObject<string>(response);
             return responseBody;
+        }
+
+        public static async Task SetAttackCondition(int userChoice, int gameId)
+        {
+            var response = await client.PostAsync($"{basePath}attack/setattackcondition/{userChoice}/{gameId}", null).Result.Content.ReadAsStringAsync();
+        }
+
+        public static async Task<string> GetAttackCondition(int userChoice, int gameId)
+        {
+            var response = await client.GetAsync($"{basePath}attack/getattackcondition/{userChoice}/{gameId}").Result.Content.ReadAsStringAsync();
+            return response;
         }
 
 

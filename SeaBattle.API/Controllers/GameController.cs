@@ -21,7 +21,7 @@ namespace SeaBattle.API.Controllers
 
         [HttpGet("GetRandomPoint")]
         public IActionResult GetRandomPoint()
-        {            
+        {
             int num = random.Next(1, 11);
             char let = new char().GetRandomLetter();
             string startPoint = $"{Convert.ToString(num) + let}";
@@ -33,7 +33,8 @@ namespace SeaBattle.API.Controllers
         [HttpGet("GetGameId")]
         public IActionResult GetGameId()
         {
-            int gameId = random.Next(100);
+            int gameId = random.Next(100);      
+
             Game currentGame = new Game();
             currentGame.GameId = gameId;
             DataStorage.Games.Add(currentGame.GameId, currentGame);
@@ -41,32 +42,39 @@ namespace SeaBattle.API.Controllers
             return Ok(gameId);
         }
 
-        [HttpPost("ConnectToGame/{gameId}")]
-        public IActionResult ConnectToGame([FromBody]int enteredGameId, [FromRoute]int gameId)
+        [HttpPost("ConnectToGame")]
+        public IActionResult ConnectToGame([FromBody] int enteredGameId)
         {
             string message = String.Empty;
-            if (gameId == enteredGameId)
+            try
             {
-                message = "Connected!";
-                DataStorage.Games[gameId].IsConnected = true;
+                if (DataStorage.Games[enteredGameId].IsConnected == false)
+                {
+                    message = "Connected!";
+                    DataStorage.Games[enteredGameId].IsConnected = true;
+                }
+                else
+                {
+                    message = "Try again!";
+                    DataStorage.Games[enteredGameId].IsConnected = true;
+                }               
             }
-            else
+            catch (Exception)
             {
                 message = "Try again!";
-                DataStorage.Games[gameId].IsConnected = false;
             }
-            var serialized = JsonConvert.SerializeObject(message);
 
+            var serialized = JsonConvert.SerializeObject(message);
             return Ok(serialized);
         }
 
         [HttpGet("GetConnectionStatus/{gameId}")]
-        public IActionResult GetConnectionStatus([FromRoute]int gameId)
+        public IActionResult GetConnectionStatus([FromRoute] int gameId)
         {
             bool isConected = DataStorage.Games[gameId].IsConnected;
             var serialized = JsonConvert.SerializeObject(isConected);
 
             return Ok(serialized);
         }
-    }      
+    }
 }

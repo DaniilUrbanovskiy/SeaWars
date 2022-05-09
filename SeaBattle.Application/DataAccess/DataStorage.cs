@@ -7,6 +7,6 @@ namespace SeaBattle.Application.DataAccess
 {
     public static class DataStorage
     {
-        public static Dictionary<int, Game> Games { get; set; } = new Dictionary<int, Game>();      
+        public static Dictionary<int, Game> Games { get; set; } = new Dictionary<int, Game>();
     }
 }

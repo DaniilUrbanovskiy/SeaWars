@@ -16,7 +16,7 @@ namespace SeaBattle.API.Controllers
     public class FieldController : ControllerBase
     {
         [HttpGet("{whoseField}/{gameId}")]
-        public IActionResult CreateField([FromRoute]WhoseField whoseField, [FromRoute]int gameId)
+        public IActionResult CreateField([FromRoute] WhoseField whoseField, [FromRoute] int gameId)
         {
             Field field = new Field();
             field.MainField = FieldHandler.CreateField();
@@ -51,7 +51,7 @@ namespace SeaBattle.API.Controllers
         }
 
         [HttpGet("RandInit/{whoseField}/{gameId}")]
-        public IActionResult RandInit([FromRoute]WhoseField whoseField, [FromRoute] int gameId)
+        public IActionResult RandInit([FromRoute] WhoseField whoseField, [FromRoute] int gameId)
         {
             Field field = whoseField == WhoseField.Field ? DataStorage.Games[gameId].Field : DataStorage.Games[gameId].EnemyField;
 
@@ -62,7 +62,7 @@ namespace SeaBattle.API.Controllers
         }
 
         [HttpPost("OwnInit/{whoseField}/{gameId}")]
-        public IActionResult OwnInit([FromBody]ShipOtions shipOtions, [FromRoute]WhoseField whoseField, [FromRoute] int gameId)
+        public IActionResult OwnInit([FromBody] ShipOtions shipOtions, [FromRoute] WhoseField whoseField, [FromRoute] int gameId)
         {
             Field field = whoseField == WhoseField.Field ? DataStorage.Games[gameId].Field : DataStorage.Games[gameId].EnemyField;
 

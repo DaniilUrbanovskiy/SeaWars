@@ -10,6 +10,7 @@ namespace SeaBattle.Infrastructure.Domain
         public Field EnemyField { get; set; } = new Field();
         public int GameId { get; set; }
         public bool IsConnected { get; set; }
-        public bool IsEnded { get; set; }
+        public bool IsFirstUserAttackFinished { get; set; }
+        public bool IsSecondUserAttackFinished { get; set; }
     }
 }
