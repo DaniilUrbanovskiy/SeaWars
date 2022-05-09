@@ -259,18 +259,16 @@ namespace SeaBattle.ConsoleUi
                         Console.WriteLine("Press (Enter) to give enemy his move:");
                         Console.ReadLine();
                         await RequestModel.SetAttackCondition(userChoice, gameId);
-
                     }
                     else
                     {
-                        while (true)
+                        bool isAttackFinished = false;
+                        while (isAttackFinished == false)
                         {
-
+                            Thread.Sleep(200);
+                            isAttackFinished = bool.Parse(await RequestModel.GetAttackCondition(userChoice, gameId));
                         }
                     }
-
-
-
                 }
                 if (movesCounter % 2 != 0)
                 {
@@ -286,8 +284,6 @@ namespace SeaBattle.ConsoleUi
                     Console.WriteLine("You lose!");
                     Console.ReadLine();
                 }
-
-
             }             
         }
         private static async Task<string[,]> InicializeByYourself(string[,] field, int whosField, int gameId)

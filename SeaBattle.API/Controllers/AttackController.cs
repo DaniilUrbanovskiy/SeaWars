@@ -66,14 +66,16 @@ namespace SeaBattle.API.Controllers
         {
             if (userChoice == 1)
             {
-                return Ok(DataStorage.Games[gameId].IsSecondUserAttackFinished);
+                bool temp = DataStorage.Games[gameId].IsSecondUserAttackFinished;
+                DataStorage.Games[gameId].IsSecondUserAttackFinished = false;
+                return Ok(temp);
             }
-            return Ok(DataStorage.Games[gameId].IsSecondUserAttackFinished);
+            else
+            {
+                bool temp = DataStorage.Games[gameId].IsFirstUserAttackFinished;
+                DataStorage.Games[gameId].IsFirstUserAttackFinished = false;
+                return Ok(temp);
+            }            
         }
-
-
-
-
-
     }
 }
