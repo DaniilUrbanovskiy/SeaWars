@@ -17,7 +17,7 @@ namespace SeaBattle.ConsoleUi
             Console.ReadLine();
             Console.Clear();
 
-            Console.WriteLine("Choose option:\n1. Play with computer\n2. Play with real player");
+            Console.WriteLine("Choose option:\n1. Single game\n2. Multiplayer");
             byte botOrPlayer = byte.Parse(Console.ReadLine());
             Console.Clear();
 
