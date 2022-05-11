@@ -1,19 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using SeaBattle.Infrastructure.Extentions;
 using SeaBattle.Infrastructure.Domain;
 using SeaBattle.Infrastructure.Common;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace SeaBattle.ConsoleUi.Requests
 {
     public static class RequestModel
     {
-        private static readonly string basePath = "https://seabattle-api.azurewebsites.net/";
-        static HttpClient client = new HttpClient();
+        private static readonly string basePath;
+        private static HttpClient client = new HttpClient();
+
+        static RequestModel()
+        {
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("app.json", optional: false)
+                .Build();
+
+            basePath = config.GetSection("ConnectionStrings")["ApiPath"];
+        }
 
         public static async Task<string[,]> GetField(int whoseField, int gameId)
         { 
