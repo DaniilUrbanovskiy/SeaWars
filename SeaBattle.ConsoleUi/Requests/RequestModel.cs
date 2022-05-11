@@ -12,7 +12,7 @@ namespace SeaBattle.ConsoleUi.Requests
 {
     public static class RequestModel
     {
-        private static readonly string basePath = "https://localhost:44373/";
+        private static readonly string basePath = "https://seabattle-api.azurewebsites.net/";
         static HttpClient client = new HttpClient();
 
         public static async Task<string[,]> GetField(int whoseField, int gameId)
