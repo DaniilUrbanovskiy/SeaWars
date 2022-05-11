@@ -12,5 +12,6 @@ namespace SeaBattle.Infrastructure.Domain
         public bool IsConnected { get; set; }
         public bool IsFirstUserAttackFinished { get; set; }
         public bool IsSecondUserAttackFinished { get; set; }
+        public string LastAttackPoint { get; set; } = null;
     }
 }

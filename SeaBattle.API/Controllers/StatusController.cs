@@ -16,23 +16,22 @@ namespace SeaBattle.API.Controllers
     [Route("[controller]")]
     public class StatusController : ControllerBase
     {
-        [HttpGet("GetGameStatus/{whoseField}/{gameId}")]
-        public IActionResult GetGameStatus([FromRoute] WhoseField whoseField, [FromRoute] int gameId)
+        [HttpGet("GetGameStatus/{gameId}")]
+        public IActionResult GetGameStatus([FromRoute] int gameId)
         {
             bool isGameEnded = false;
-            if (whoseField == WhoseField.EnemysField)
-            {
-                isGameEnded = AvaibilityValidation.IsGameEnded(DataStorage.Games[gameId].EnemyField);
-            }
-            else
-            {
-                isGameEnded = AvaibilityValidation.IsGameEnded(DataStorage.Games[gameId].Field);
-            }
+            string serialized = default;
+
+            isGameEnded = AvaibilityValidation.IsGameEnded(DataStorage.Games[gameId].EnemyField);
             if (isGameEnded == true)
             {
-                DataStorage.Games.Remove(gameId);
-            }
-            var serialized = JsonConvert.SerializeObject(isGameEnded);
+                serialized = JsonConvert.SerializeObject(isGameEnded);
+                return Ok(serialized);
+            }         
+            
+            isGameEnded = AvaibilityValidation.IsGameEnded(DataStorage.Games[gameId].Field);
+                  
+            serialized = JsonConvert.SerializeObject(isGameEnded);
             return Ok(serialized);
         }
 

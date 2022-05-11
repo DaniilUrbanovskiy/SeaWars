@@ -48,7 +48,7 @@ namespace SeaBattle.API.Controllers
         }
 
         [HttpPost("SetAttackCondition/{userChoice}/{gameId}")]
-        public IActionResult SetAttackCondition([FromRoute]int userChoice, [FromRoute]int gameId)
+        public IActionResult SetAttackCondition([FromRoute] int userChoice, [FromRoute] int gameId)
         {
             if (userChoice == 1)
             {
@@ -75,7 +75,25 @@ namespace SeaBattle.API.Controllers
                 bool temp = DataStorage.Games[gameId].IsFirstUserAttackFinished;
                 DataStorage.Games[gameId].IsFirstUserAttackFinished = false;
                 return Ok(temp);
-            }            
+            }
         }
+
+        [HttpPost("SetLastAttackPoint/{gameId}")]
+        public IActionResult SetLastAttackPoint([FromBody]string startPoint, [FromRoute] int gameId)
+        {
+            DataStorage.Games[gameId].LastAttackPoint = startPoint;
+            return Ok();
+        }
+
+        [HttpGet("GetLastAttackPoint/{gameId}")]
+        public IActionResult GetLastAttackPoint([FromRoute] int gameId)
+        {
+            var temp = DataStorage.Games[gameId].LastAttackPoint;
+            DataStorage.Games[gameId].LastAttackPoint = string.Empty;
+
+            return Ok(temp);                   
+        }
+
+
     }
 }

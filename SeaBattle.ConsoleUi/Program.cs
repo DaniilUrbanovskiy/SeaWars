@@ -59,13 +59,14 @@ namespace SeaBattle.ConsoleUi
                         while (attackStatus != AttackStatus.Missed)
                         {
                             Console.Clear();
+                            ShowField(field);
                             ShowField(enemyField, isEnemyField: true);
                             Console.WriteLine("Enter point to attack enemy's ship:");
                             startPoint = Console.ReadLine();
                             AttackResponse attackResponse = RequestModel.SetPoint(enemyField, startPoint, 1, gameId).Result;
                             attackStatus = attackResponse.AttackStatus;
                             enemyField = attackResponse.Field.ToDoubleDimension();
-                            isGameEnded = bool.Parse(await RequestModel.GetGameStatus(2, gameId));
+                            isGameEnded = bool.Parse(await RequestModel.GetGameStatus(gameId));
                             Console.Clear();
                             if (isGameEnded == true)
                             {
@@ -76,6 +77,7 @@ namespace SeaBattle.ConsoleUi
                         {
                             break;
                         }
+                        ShowField(field);
                         ShowField(enemyField, isEnemyField: true);
                         Console.WriteLine($"You attacked ({startPoint})\n");
                         Console.WriteLine("Press (Enter) to give enemy his move:");
@@ -91,6 +93,7 @@ namespace SeaBattle.ConsoleUi
                             {
                                 Console.Clear();
                                 ShowField(field);
+                                ShowField(enemyField, isEnemyField: true);
                             }
                             if (attackStatus != AttackStatus.Failed)
                             {
@@ -119,7 +122,7 @@ namespace SeaBattle.ConsoleUi
                             {
                                 nextPointToAttack = startPoint;
                             }
-                            isGameEnded = isGameEnded = bool.Parse(await RequestModel.GetGameStatus(1, gameId));
+                            isGameEnded = isGameEnded = bool.Parse(await RequestModel.GetGameStatus(gameId));
                             Console.Clear();
                             if (isGameEnded == true)
                             {
@@ -131,6 +134,7 @@ namespace SeaBattle.ConsoleUi
                             break;
                         }
                         ShowField(field);
+                        ShowField(enemyField, isEnemyField: true);
                         Console.WriteLine($"Enemy attacked ({startPoint})\n");
                         Console.WriteLine("Press (Enter) to attack the enemy:");
                         Console.ReadLine();
@@ -139,6 +143,7 @@ namespace SeaBattle.ConsoleUi
                 if (movesCounter % 2 != 0)
                 {
                     Console.Clear();
+                    ShowField(field);
                     ShowField(enemyField, isEnemyField: true);
                     Console.WriteLine("You win!");
                     Console.ReadLine();
@@ -147,6 +152,7 @@ namespace SeaBattle.ConsoleUi
                 {
                     Console.Clear();
                     ShowField(field);
+                    ShowField(enemyField, isEnemyField: true);
                     Console.WriteLine("You lose!");
                     Console.ReadLine();
                 }
@@ -223,6 +229,7 @@ namespace SeaBattle.ConsoleUi
                 }
                 Console.Clear();
                 var enemyField = await RequestModel.GetEnemyField(userChoiceDec, gameId);
+                ShowField(field);
                 ShowField(enemyField, isEnemyField: true);
 
                 int movesCounter = userChoiceDec;
@@ -236,14 +243,20 @@ namespace SeaBattle.ConsoleUi
                         string startPoint = string.Empty;
                         while (attackStatus != AttackStatus.Missed)
                         {
+                            field = await RequestModel.GetEnemyField(userChoice, gameId);
                             Console.Clear();
-                            ShowField(enemyField, isEnemyField: true);
+                            ShowField(field);
+                            ShowField(enemyField, isEnemyField: true);                        
                             Console.WriteLine("Enter point to attack enemy's ship:");
                             startPoint = Console.ReadLine();
                             AttackResponse attackResponse = RequestModel.SetPoint(enemyField, startPoint, userChoice, gameId).Result;
                             attackStatus = attackResponse.AttackStatus;
                             enemyField = attackResponse.Field.ToDoubleDimension();
-                            isGameEnded = bool.Parse(await RequestModel.GetGameStatus(userChoiceDec, gameId));
+                            if (attackResponse.AttackStatus != AttackStatus.Failed)
+                            {
+                                await RequestModel.SetLastAttackPoint(startPoint, gameId);
+                            }
+                            isGameEnded = bool.Parse(await RequestModel.GetGameStatus(gameId));
                             Console.Clear();
                             if (isGameEnded == true)
                             {
@@ -254,6 +267,7 @@ namespace SeaBattle.ConsoleUi
                         {
                             break;
                         }
+                        ShowField(field);
                         ShowField(enemyField, isEnemyField: true);
                         Console.WriteLine($"You attacked ({startPoint})\n");
                         Console.WriteLine("Press (Enter) to give enemy his move:");
@@ -262,17 +276,46 @@ namespace SeaBattle.ConsoleUi
                     }
                     else
                     {
+                        Console.Clear();
+                        ShowField(field);
+                        ShowField(enemyField, isEnemyField: true);
+                        Console.WriteLine("Wait enemy's attack...");
                         bool isAttackFinished = false;
+                        string lastAttackPoint = null;
+                        string temp = null;
                         while (isAttackFinished == false)
                         {
                             Thread.Sleep(200);
+                            isGameEnded = bool.Parse(await RequestModel.GetGameStatus(gameId));
+                            if (isGameEnded == true)
+                            {
+                                break;
+                            }
+                            lastAttackPoint = await RequestModel.GetLastAttackPoint(gameId);
+                            if (lastAttackPoint != null && lastAttackPoint != temp && lastAttackPoint != string.Empty)
+                            {
+                                field = await RequestModel.GetEnemyField(userChoice, gameId);
+                                Console.Clear();
+                                ShowField(field);
+                                ShowField(enemyField, isEnemyField: true);
+                                Console.WriteLine("Wait enemy's attack...");
+                                Console.WriteLine($"Enemy attacked {lastAttackPoint}");
+                            }
+                            temp = lastAttackPoint;
                             isAttackFinished = bool.Parse(await RequestModel.GetAttackCondition(userChoice, gameId));
+                        }
+                        if (isGameEnded == true)
+                        {
+                            break;
                         }
                     }
                 }
+                field = await RequestModel.GetEnemyField(userChoice, gameId);
+                enemyField = await RequestModel.GetEnemyField(userChoiceDec, gameId);
                 if (movesCounter % 2 != 0)
                 {
                     Console.Clear();
+                    ShowField(field);
                     ShowField(enemyField, isEnemyField: true);
                     Console.WriteLine("You win!");
                     Console.ReadLine();
@@ -281,10 +324,12 @@ namespace SeaBattle.ConsoleUi
                 {
                     Console.Clear();
                     ShowField(field);
+                    ShowField(enemyField, isEnemyField: true);
                     Console.WriteLine("You lose!");
                     Console.ReadLine();
                 }
-            }             
+            }
+            await RequestModel.RemoveGameFromStorage(gameId);
         }
         private static async Task<string[,]> InicializeByYourself(string[,] field, int whosField, int gameId)
         {
@@ -321,9 +366,13 @@ namespace SeaBattle.ConsoleUi
             return field;
         }
         public static void ShowField(string [,] field, bool isEnemyField = false)
-         {
+        {
             for (int i = 0; i < 14; i++)
             {
+                if (isEnemyField == true)
+                {
+                    Console.SetCursorPosition(40, i);
+                }
                 for (int j = 0; j < 14; j++)
                 {
                     if (isEnemyField == false)
@@ -365,7 +414,9 @@ namespace SeaBattle.ConsoleUi
                 }
                 Console.WriteLine();
             }
-        }      
+            Console.WriteLine("            You                 vs                Enemy");
+            Console.WriteLine();
+        }
     }
 }
 

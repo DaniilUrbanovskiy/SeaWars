@@ -27,9 +27,9 @@ namespace SeaBattle.ConsoleUi.Requests
             return response.Content.ReadAsStringAsync().Result.ToDoubleArray();
         }
 
-        public static async Task<string> GetGameStatus(int whoseField, int gameId)
+        public static async Task<string> GetGameStatus(int gameId)
         {
-            var response = await client.GetAsync($"{basePath}status/getgamestatus/{whoseField}/{gameId}");
+            var response = await client.GetAsync($"{basePath}status/getgamestatus/{gameId}");
             return response.Content.ReadAsStringAsync().Result;
         }
 
@@ -161,6 +161,27 @@ namespace SeaBattle.ConsoleUi.Requests
             var response = await client.GetAsync($"{basePath}attack/getattackcondition/{userChoice}/{gameId}").Result.Content.ReadAsStringAsync();
             return response;
         }
+
+        public static async Task RemoveGameFromStorage(int gameId)
+        {
+            var response = await client.PostAsync($"{basePath}attack/removegamefromstorage/{gameId}", null).Result.Content.ReadAsStringAsync();
+        }
+
+        public static async Task SetLastAttackPoint(string startPoint,int gameId)
+        {
+            string json = JsonConvert.SerializeObject(startPoint);
+
+            StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync($"{basePath}attack/setlastattackpoint/{gameId}", httpContent).Result.Content.ReadAsStringAsync();
+        }
+
+        public static async Task<string> GetLastAttackPoint(int gameId)
+        {
+            var response = await client.GetAsync($"{basePath}attack/getlastattackpoint/{gameId}").Result.Content.ReadAsStringAsync();
+            return response;
+        }
+
 
 
     }

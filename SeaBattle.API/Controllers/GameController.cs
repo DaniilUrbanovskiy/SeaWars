@@ -33,8 +33,11 @@ namespace SeaBattle.API.Controllers
         [HttpGet("GetGameId")]
         public IActionResult GetGameId()
         {
-            int gameId = random.Next(100);      
-
+            int gameId = random.Next(1000);
+            while (DataStorage.Games.ContainsKey(gameId))
+            {
+                gameId = random.Next(1000);
+            }
             Game currentGame = new Game();
             currentGame.GameId = gameId;
             DataStorage.Games.Add(currentGame.GameId, currentGame);
@@ -76,5 +79,14 @@ namespace SeaBattle.API.Controllers
 
             return Ok(serialized);
         }
+
+        [HttpPost("RemoveGameFromStorage/{gameId}")]
+        public IActionResult RemoveGameFromStorage([FromRoute] int gameId)
+        {
+            DataStorage.Games.Remove(gameId);
+            return Ok();
+        }
+
+
     }
 }

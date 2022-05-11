@@ -23,7 +23,6 @@ namespace SeaBattle.Application.Core
                 {
                     return false;
                 }
-
             }
             else
             {
