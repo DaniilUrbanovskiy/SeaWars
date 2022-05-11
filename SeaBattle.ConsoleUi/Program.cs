@@ -12,6 +12,7 @@ namespace SeaBattle.ConsoleUi
     {       
         static async Task Main(string[] args)
         {
+            ShowScreen();
             Console.WriteLine("Press (Enter) to start game:");
             Console.ReadLine();
             Console.Clear();
@@ -415,6 +416,24 @@ namespace SeaBattle.ConsoleUi
                 Console.WriteLine();
             }
             Console.WriteLine("            You                 vs                Enemy");
+            Console.WriteLine();
+        }
+        private static void ShowScreen()
+        {
+            Console.SetCursorPosition(15, 0);
+            Console.WriteLine(" ######  ########    ###       ########     ###    ######## ######## ##       ######## ");
+            Console.SetCursorPosition(15, 1);
+            Console.WriteLine("##    ## ##         ## ##      ##     ##   ## ##      ##       ##    ##       ##       ");
+            Console.SetCursorPosition(15, 2);
+            Console.WriteLine("##       ##        ##   ##     ##     ##  ##   ##     ##       ##    ##       ##       ");
+            Console.SetCursorPosition(15, 3);
+            Console.WriteLine(" ######  ######   ##     ##    ########  ##     ##    ##       ##    ##       ######   ");
+            Console.SetCursorPosition(15, 4);
+            Console.WriteLine("      ## ##       #########    ##     ## #########    ##       ##    ##       ##       ");
+            Console.SetCursorPosition(15, 5);
+            Console.WriteLine("##    ## ##       ##     ##    ##     ## ##     ##    ##       ##    ##       ##       ");
+            Console.SetCursorPosition(15, 6);
+            Console.WriteLine(" ######  ######## ##     ##    ########  ##     ##    ##       ##    ######## ######## ");
             Console.WriteLine();
         }
     }
